@@ -2,6 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
+import personalRoutes from './routes/personal.routes.js';
+import emolumentosRoutes from './routes/emolumentos.routes.js';
 
 dotenv.config();
 
@@ -10,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:4200', // URL del frontend Angular
+  origin: 'http://localhost:4200',
   credentials: true
 }));
 app.use(express.json());
@@ -18,6 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 
 // Rutas
 app.use('/api/auth', authRoutes);
+app.use('/api/personal', personalRoutes);
+app.use('/api/emolumentos', emolumentosRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {

@@ -16,7 +16,8 @@ export class NavbarComponent implements OnInit {
 
   private routeTitles: { [key: string]: string } = {
     '/app/informacion/consulta-personal': 'Consulta del Personal',
-    '/app/informacion/solicitudes-prestamos': 'Solicitudes Préstamos',
+    '/app/informacion/solicitudes-prestamos/consulta': 'Consulta Solicitudes',
+    '/app/informacion/solicitudes-prestamos/mantenimiento': 'Mantenimiento Solicitudes',
     '/app/informacion/bazar': 'Bazar',
     '/app/informacion/reporte-bazar': 'Reporte Bazar',
     '/app/procesos/actualizar-desembolsos': 'Actualizar Desembolsos',

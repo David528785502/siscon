@@ -70,7 +70,7 @@ npm start
 1. Iniciar el backend (puerto 3000)
 2. Iniciar el frontend (puerto 4200)
 3. Acceder a http://localhost:4200
-4. Credenciales de prueba: admin / admin123
+4. Credenciales de prueba: admin / admin
 
 ## Módulos
 

@@ -42,22 +42,22 @@ INSERT INTO sc_personal_detalle (codigo, grup_per, are_nom, clave_org, area, div
 -- DATOS DE PRUEBA: sc_emol_p1 (Trabajadores 276)
 -- ============================================
 INSERT INTO sc_emol_p1 (codigo, concepto, descripcion, importe, cantidad, periodo, tipo, orden, anulado, motivo, fecha, usr_regi, red) VALUES
-('20001234', '0101', 'REMUNERACION BASICA', 3000.00, 1.00, '2026-01', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('20001234', '0201', 'BONIFICACION FAMILIAR', 500.00, 1.00, '2026-01', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('20001234', '0301', 'AFP', 390.00, 1.00, '2026-01', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');
+('20001234', '9200', 'REMUNERACION BASICA', 3000.00, 1.00, '2025-12', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('20001234', '9209', 'BONIFICACION FAMILIAR', 500.00, 1.00, '2025-12', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('20001234', '8005', 'AFP', 390.00, 1.00, '2025-12', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');
 
 -- ============================================
 -- DATOS DE PRUEBA: sc_emol_p2 (Trabajadores 728)
 -- ============================================
 INSERT INTO sc_emol_p2 (codigo, concepto, descripcion, importe, cantidad, periodo, tipo, orden, anulado, motivo, fecha, usr_regi, red) VALUES
-('30002345', '0101', 'REMUNERACION BASICA', 2500.00, 1.00, '2026-01', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('30002345', '0201', 'BONIFICACION FAMILIAR', 300.00, 1.00, '2026-01', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('30002345', '0301', 'AFP', 325.00, 1.00, '2026-01', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');
+('30002345', '9200', 'REMUNERACION BASICA', 2500.00, 1.00, '2025-12', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('30002345', '9209', 'BONIFICACION FAMILIAR', 300.00, 1.00, '2025-12', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('30002345', '8005', 'AFP', 325.00, 1.00, '2025-12', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');
 
 -- ============================================
 -- DATOS DE PRUEBA: sc_emol_p3 (Trabajadores CAS)
 -- ============================================
 INSERT INTO sc_emol_p3 (codigo, concepto, descripcion, importe, cantidad, periodo, tipo, orden, anulado, motivo, fecha, usr_regi, red) VALUES
-('40003456', '0101', 'REMUNERACION CAS', 5000.00, 1.00, '2026-01', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('40003456', '0201', 'BONIFICACION', 500.00, 1.00, '2026-01', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
-('40003456', '0301', 'RENTA 4TA CATEGORIA', 650.00, 1.00, '2026-01', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');
+('40003456', '9200', 'REMUNERACION CAS', 5000.00, 1.00, '2025-12', 'INGRESO', 1, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('40003456', '9209', 'BONIFICACION', 500.00, 1.00, '2025-12', 'INGRESO', 2, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01'),
+('40003456', '8039', 'RENTA 4TA CATEGORIA', 650.00, 1.00, '2025-12', 'DESCUENTO', 3, 0, '', '2026-01-16 08:00:00', 'admin', 'RED01');

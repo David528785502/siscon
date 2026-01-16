@@ -7,7 +7,8 @@ import { ReporteBazarComponent } from './reporte-bazar/reporte-bazar.component';
 
 const routes: Routes = [
   { path: 'consulta-personal', component: ConsultaPersonalComponent },
-  { path: 'solicitudes-prestamos', component: SolicitudesPrestamosComponent },
+  { path: 'solicitudes-prestamos/consulta', component: SolicitudesPrestamosComponent },
+  { path: 'solicitudes-prestamos/mantenimiento', component: SolicitudesPrestamosComponent },
   { path: 'bazar', component: BazarComponent },
   { path: 'reporte-bazar', component: ReporteBazarComponent }
 ];

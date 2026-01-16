@@ -22,7 +22,13 @@ export class SidebarComponent {
       expanded: true,
       children: [
         { label: 'Consulta del Personal', route: '/app/informacion/consulta-personal' },
-        { label: 'Solicitudes Préstamos', route: '/app/informacion/solicitudes-prestamos' },
+        {
+          label: 'Solicitudes Préstamos',
+          children: [
+            { label: 'Consulta Solicitudes', route: '/app/informacion/solicitudes-prestamos/consulta' },
+            { label: 'Mantenimiento Solicitudes', route: '/app/informacion/solicitudes-prestamos/mantenimiento' }
+          ]
+        },
         { label: 'Bazar', route: '/app/informacion/bazar' },
         { label: 'Reporte Bazar', route: '/app/informacion/reporte-bazar' }
       ]
