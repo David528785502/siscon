@@ -1,0 +1,57 @@
+<aside class="w-64 bg-white shadow-lg">
+  <div class="p-4 border-b">
+    <h2 class="text-lg font-bold text-gray-800">SISCON</h2>
+    <p class="text-xs text-gray-500">Sistema de Préstamos</p>
+  </div>
+
+  <nav class="p-2 overflow-y-auto" style="height: calc(100vh - 80px);">
+    <div *ngFor="let item of menuItems" class="mb-1">
+      <!-- Menú principal -->
+      <div 
+        class="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer"
+        (click)="toggleMenu(item)">
+        <div class="flex items-center">
+          <span class="material-symbols-outlined text-gray-600 mr-2 text-xl">{{ item.icon }}</span>
+          <span class="text-sm font-medium text-gray-700">{{ item.label }}</span>
+        </div>
+        <span *ngIf="item.children" class="material-symbols-outlined text-gray-400 text-lg">
+          {{ item.expanded ? 'expand_less' : 'expand_more' }}
+        </span>
+      </div>
+
+      <!-- Submenú nivel 1 -->
+      <div *ngIf="item.children && item.expanded" class="ml-4 mt-1">
+        <div *ngFor="let child of item.children">
+          <a 
+            *ngIf="child.route"
+            [routerLink]="child.route"
+            routerLinkActive="bg-blue-50 text-blue-700"
+            class="block p-2 pl-8 text-sm text-gray-600 rounded hover:bg-gray-50">
+            {{ child.label }}
+          </a>
+          
+          <!-- Submenú nivel 2 -->
+          <div *ngIf="child.children">
+            <div 
+              class="flex items-center justify-between p-2 pl-8 rounded hover:bg-gray-50 cursor-pointer"
+              (click)="toggleMenu(child)">
+              <span class="text-sm text-gray-600">{{ child.label }}</span>
+              <span class="material-symbols-outlined text-gray-400 text-base">
+                {{ child.expanded ? 'expand_less' : 'expand_more' }}
+              </span>
+            </div>
+            <div *ngIf="child.expanded" class="ml-4">
+              <a 
+                *ngFor="let subChild of child.children"
+                [routerLink]="subChild.route"
+                routerLinkActive="bg-blue-50 text-blue-700"
+                class="block p-2 pl-12 text-sm text-gray-600 rounded hover:bg-gray-50">
+                {{ subChild.label }}
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</aside>

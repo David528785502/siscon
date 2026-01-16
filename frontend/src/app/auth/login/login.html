@@ -1,0 +1,85 @@
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[url('https://placeholder.pics/svg/2000x2000/0055c8/006db1')] bg-cover bg-center p-4">
+  <div class="absolute inset-0 bg-gradient-to-br from-[#0044b2] to-[#006db1] opacity-90"></div>
+  <div class="relative z-10 w-full max-w-[440px] flex-col rounded-xl bg-white p-8 shadow-2xl transition-all dark:bg-slate-900">
+    <div class="flex flex-col items-center justify-center pb-6">
+      <div class="mb-4 flex h-16 w-16 items-center justify-center overflow-hidden rounded-lg bg-blue-50 p-2 text-primary">
+        <span class="material-symbols-outlined text-4xl">account_balance</span>
+      </div>
+      <span class="mt-1 text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">Portal Administrativo</span>
+    </div>
+    <div class="pb-8 text-center">
+      <h2 class="text-xl font-semibold leading-tight text-slate-900 dark:text-slate-100">
+        Sistema de Gestión de Préstamos
+      </h2>
+      <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">
+        Acceso exclusivo para personal interno
+      </p>
+    </div>
+    <form class="flex flex-col gap-5" (ngSubmit)="onSubmit()">
+      <div *ngIf="errorMessage" class="rounded-lg bg-red-50 p-3 text-sm text-red-800 dark:bg-red-900/20 dark:text-red-400">
+        {{ errorMessage }}
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="username">Usuario</label>
+        <div class="group flex items-center rounded-lg border border-slate-300 bg-white px-3 py-1 transition-colors focus-within:border-primary focus-within:ring-1 focus-within:ring-primary dark:border-slate-700 dark:bg-slate-800">
+          <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary">person</span>
+          <input 
+            [(ngModel)]="username"
+            name="username"
+            class="w-full border-none bg-transparent p-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0 dark:text-white" 
+            id="username" 
+            placeholder="Ingrese su usuario corporativo" 
+            type="text"
+            [disabled]="loading"
+            required/>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-sm font-medium text-slate-700 dark:text-slate-300" for="password">Contraseña</label>
+        <div class="group flex items-center rounded-lg border border-slate-300 bg-white px-3 py-1 transition-colors focus-within:border-primary focus-within:ring-1 focus-within:ring-primary dark:border-slate-700 dark:bg-slate-800">
+          <span class="material-symbols-outlined text-slate-400 group-focus-within:text-primary">lock</span>
+          <input 
+            [(ngModel)]="password"
+            name="password"
+            class="w-full flex-1 border-none bg-transparent p-2.5 text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-0 dark:text-white" 
+            id="password" 
+            placeholder="Ingrese su contraseña" 
+            type="password"
+            [disabled]="loading"
+            required/>
+          <button class="flex items-center justify-center text-slate-400 focus:outline-none hover:text-slate-600 dark:hover:text-slate-200" type="button">
+            <span class="material-symbols-outlined cursor-pointer text-xl">visibility</span>
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center justify-between py-1">
+        <label class="flex cursor-pointer items-center gap-2">
+          <input 
+            [(ngModel)]="rememberMe"
+            name="rememberMe"
+            class="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary dark:border-slate-600 dark:bg-slate-700" 
+            type="checkbox"/>
+          <span class="text-sm text-slate-600 dark:text-slate-400">Recordarme</span>
+        </label>
+        <a class="text-sm font-medium text-primary hover:text-blue-700 hover:underline" href="#">
+          ¿Olvidó su contraseña?
+        </a>
+      </div>
+      <button 
+        class="mt-2 w-full rounded-lg bg-primary px-4 py-3.5 text-base font-bold text-white shadow-md transition-colors hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-slate-400 disabled:cursor-not-allowed" 
+        type="submit"
+        [disabled]="loading">
+        <span *ngIf="!loading">Iniciar Sesión</span>
+        <span *ngIf="loading">Iniciando sesión...</span>
+      </button>
+    </form>
+  </div>
+  <div class="relative z-10 mt-8 text-center">
+    <p class="text-xs text-blue-100 opacity-90">
+      EsSalud - Seguro Social de Salud del Perú
+    </p>
+    <p class="mt-1 text-[10px] text-blue-200 opacity-70">
+      Versión 1.0.0 © 2026
+    </p>
+  </div>
+</div>

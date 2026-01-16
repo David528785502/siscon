@@ -1,0 +1,21 @@
+<header class="bg-white shadow-sm border-b">
+  <div class="flex items-center justify-between px-6 py-4">
+    <div>
+      <h1 class="text-xl font-semibold text-gray-800">{{ currentModule }}</h1>
+      <p class="text-xs text-gray-500">EsSalud - Seguro Social de Salud</p>
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <div class="text-right">
+        <p class="text-sm font-medium text-gray-700">{{ currentUser?.username }}</p>
+        <p class="text-xs text-gray-500">{{ currentUser?.codigo }}</p>
+      </div>
+      <button 
+        (click)="logout()"
+        class="flex items-center px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded">
+        <span class="material-symbols-outlined mr-1">logout</span>
+        Salir
+      </button>
+    </div>
+  </div>
+</header>

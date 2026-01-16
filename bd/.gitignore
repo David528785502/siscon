@@ -1,0 +1,9 @@
+# Bases de datos
+*.sql.backup
+*.dump
+
+# Configuraciones locales
+*.local
+
+# Logs
+*.log

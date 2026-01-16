@@ -1,0 +1,15 @@
+<div class="flex h-screen bg-gray-100">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Main Content -->
+  <div class="flex flex-1 flex-col overflow-hidden">
+    <!-- Navbar -->
+    <app-navbar [currentUser]="currentUser" (onLogout)="logout()"></app-navbar>
+
+    <!-- Page Content -->
+    <main class="flex-1 overflow-y-auto p-6">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
