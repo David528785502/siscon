@@ -19,8 +19,8 @@
           <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Fecha Ingreso</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Estado</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Ingreso Neto</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Liquidez</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Capacidad</th>
+          <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Liquidez</th>
         </tr>
       </thead>
       <tbody class="divide-y divide-gray-200">
@@ -37,8 +37,8 @@
             </span>
           </td>
           <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(persona.ingreso_neto) }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(calcularLiquidez(persona.ingreso_neto)) }}</td>
           <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(calcularCapacidad(persona.ingreso_neto)) }}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(calcularLiquidez(persona.ingreso_neto)) }}</td>
         </tr>
       </tbody>
     </table>

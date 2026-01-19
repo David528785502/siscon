@@ -7,5 +7,12 @@ import { Component } from '@angular/core';
   styleUrl: './solicitudes-prestamos.scss',
 })
 export class SolicitudesPrestamosComponent {
+  solicitudes: any[] = [];
+  loading = false;
 
+  constructor() {}
+
+  ngOnInit(): void {
+    // TODO: Cargar solicitudes
+  }
 }
