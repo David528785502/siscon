@@ -1,15 +1,15 @@
-<div class="bg-white rounded-lg shadow">
+<div *ngIf="isMantenimiento()">
+  <div class="bg-white rounded-lg shadow">
     <div *ngIf="loading" class="p-8 text-center">
       <p class="text-gray-600">Cargando datos...</p>
     </div>
 
-    <div *ngIf="!loading && solicitudes.length > 0" class="overflow-x-auto">
+    <div *ngIf="!loading" class="overflow-x-auto">
       <table class="w-full">
         <thead class="bg-gray-50 border-b">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">N° Solicitud</th>
+            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">ID</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Código</th>
-            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Id</th>
             <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Apellidos y Nombres</th>
             <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Monto S/.</th>
             <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Plazo</th>
@@ -20,26 +20,33 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200">
-          <tr *ngFor="let solicitud of solicitudes" class="hover:bg-gray-50">
-            <td class="px-4 py-3 text-sm text-gray-900"><!-- N° Solicitud --></td>
-            <td class="px-4 py-3 text-sm text-gray-900"><!-- Código --></td>
-            <td class="px-4 py-3 text-sm text-gray-900"><!-- Id --></td>
-            <td class="px-4 py-3 text-sm text-gray-900"><!-- Apellidos y Nombres --></td>
-            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium"><!-- Monto --></td>
-            <td class="px-4 py-3 text-sm text-gray-900 text-center"><!-- Plazo --></td>
-            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium"><!-- Cuota --></td>
-            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium"><!-- Liquidez --></td>
+          <tr *ngFor="let solicitud of solicitudes">
+            <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.id }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.codigo }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.nombreCompleto }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ solicitud.monto | number:'1.2-2' }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 text-center">{{ solicitud.plazo }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ solicitud.cuota | number:'1.2-2' }}</td>
+            <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ solicitud.liquidez | number:'1.2-2' }}</td>
             <td class="px-4 py-3 text-sm text-center">
-              <!-- Estado -->
+              <span [ngClass]="{
+                'px-2 py-1 rounded text-xs font-medium': true,
+                'bg-green-100 text-green-800': solicitud.estado === 'A',
+                'bg-yellow-100 text-yellow-800': solicitud.estado === 'P',
+                'bg-red-100 text-red-800': solicitud.estado === 'R'
+              }">
+                {{ solicitud.estado }}
+              </span>
             </td>
-            <td class="px-4 py-3 text-sm text-gray-600"><!-- Observación --></td>
+            <td class="px-4 py-3 text-sm text-gray-600">{{ solicitud.observacion }}</td>
+          </tr>
+          <tr *ngIf="solicitudes.length === 0">
+            <td colspan="9" class="px-4 py-8 text-center text-gray-500">
+              No hay solicitudes registradas
+            </td>
           </tr>
         </tbody>
       </table>
-    </div>
-
-    <div *ngIf="!loading && solicitudes.length === 0" class="p-8 text-center text-gray-500">
-      No hay solicitudes registradas
     </div>
 
     <div *ngIf="!loading && solicitudes.length > 0" class="p-4 border-t bg-gray-50">
@@ -48,25 +55,25 @@
   </div>
 
   <!-- Secciones de Botones -->
-  <div class="mt-6 flex flex-wrap gap-6">
+  <div class="mt-6 flex flex-wrap gap-6 justify-between">
     <!-- Sección Izquierda: Importar, Preliminar, Imprimir -->
     <div class="bg-white rounded-lg shadow px-6 py-4">
       <div class="flex flex-wrap gap-3">
-        <button class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button (click)="abrirSelectorArchivo()" class="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
           </svg>
           Importar
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
           Preliminar
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
           </svg>
           Imprimir
@@ -75,34 +82,34 @@
     </div>
 
     <!-- Sección Derecha: Capacidad, Consultar, Modificar, Anular, Anular Todo -->
-    <div class="bg-white rounded-lg shadow px-6 py-4 flex-1">
-      <div class="flex flex-wrap gap-3">
-        <button class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white rounded-lg shadow px-6 py-4">
+      <div class="flex flex-wrap gap-3 justify-end">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
           Capacidad
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           Consultar
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
           Modificar
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Anular
         </button>
-        <button class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm">
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <button class="inline-flex items-center px-3 py-1.5 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
           Anular Todo
@@ -110,3 +117,223 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal de Validación de Archivo -->
+  <div *ngIf="mostrarValidacion" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Validación de Archivo</h3>
+          <button (click)="cerrarValidacion()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="px-6 py-4">
+        <div class="space-y-4">
+          <!-- Nombre del archivo -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Archivo seleccionado</label>
+            <p class="text-sm text-gray-900 bg-gray-50 px-3 py-2 rounded">{{ nombreArchivo }}</p>
+          </div>
+
+          <!-- Error o Éxito -->
+          <div *ngIf="!formatoValido" class="bg-red-50 border border-red-200 rounded-md p-3">
+            <div class="flex">
+              <svg class="w-5 h-5 text-red-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p class="text-sm text-red-800">{{ errorFormato }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="formatoValido" class="space-y-3">
+            <div class="bg-green-50 border border-green-200 rounded-md p-3">
+              <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <p class="text-sm text-green-800">Formato de archivo válido</p>
+              </div>
+            </div>
+
+            <!-- Información extraída -->
+            <div class="bg-gray-50 rounded-md p-4 space-y-2">
+              <div class="flex justify-between">
+                <span class="text-sm font-medium text-gray-700">Código Entidad:</span>
+                <span class="text-sm text-gray-900">{{ codigoEntidad }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-medium text-gray-700">Entidad:</span>
+                <span class="text-sm text-gray-900">{{ nombreEntidad || 'No encontrada' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-sm font-medium text-gray-700">Fecha Solicitud:</span>
+                <span class="text-sm text-gray-900">{{ fechaSolicitud }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formato esperado -->
+          <div class="bg-blue-50 border border-blue-200 rounded-md p-3">
+            <p class="text-xs text-blue-800">
+              <span class="font-semibold">Formato esperado:</span> codigo_ddmmyyyy.txt<br>
+              <span class="text-blue-700">Ejemplo: 155_23072012.txt</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-3">
+        <button (click)="cerrarValidacion()" class="px-4 py-2 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+          Cancelar
+        </button>
+        <button 
+          (click)="procesarImportacion()" 
+          [disabled]="!formatoValido"
+          [class.opacity-50]="!formatoValido"
+          [class.cursor-not-allowed]="!formatoValido"
+          class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:hover:bg-blue-600">
+          Procesar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de Importar Solicitudes -->
+  <div *ngIf="mostrarModalImportacion" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] flex flex-col">
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">Importar Solicitudes</h3>
+          <button (click)="cerrarModalImportacion()" class="text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Información del banco y fecha -->
+      <div class="px-6 py-4 bg-gray-50 border-b border-gray-200">
+        <div class="relative flex items-center">
+          <!-- Entidad Financiera -->
+          <div class="flex-1">
+            <p class="text-sm font-semibold text-gray-700 mb-1">Entidad Financiera</p>
+            <p class="text-base text-gray-900">{{ codigoEntidad }} - {{ nombreEntidad }}</p>
+          </div>
+          
+          <!-- Fecha Solicitud - Centrado Absoluto -->
+          <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
+            <p class="text-sm font-semibold text-gray-700 mb-1">Fecha Solicitud</p>
+            <p class="text-base text-gray-900">{{ fechaSolicitudFormateada }}</p>
+          </div>
+          
+          <!-- Leyenda -->
+          <div class="ml-auto bg-white border border-gray-300 rounded-lg px-4 py-3">
+            <p class="text-xs font-semibold text-gray-700 mb-2">Leyenda:</p>
+            <div class="flex gap-4">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-white border border-gray-300 rounded"></div>
+                <span class="text-xs text-gray-700">Nueva</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-blue-100 border border-blue-300 rounded"></div>
+                <span class="text-xs text-gray-700">Compra</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 bg-amber-100 border border-amber-300 rounded"></div>
+                <span class="text-xs text-gray-700">Ampliación</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Body - Tabla -->
+      <div class="flex-1 overflow-auto px-6 py-4">
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50 border-b sticky top-0">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">N°</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Código</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Apellidos y Nombres</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Monto</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Plazo</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Cuota</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Liquidez</th>
+                <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Est.</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Observación</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr *ngFor="let solicitud of solicitudesImportadas" 
+                  [ngClass]="{
+                    'bg-blue-50': solicitud.tipo === 1,
+                    'bg-amber-50': solicitud.tipo === 2
+                  }">
+                <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.numero }}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.codigo }}</td>
+                <td class="px-4 py-3 text-sm text-gray-900">{{ solicitud.nombreCompleto }}</td>
+                <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ solicitud.monto | number:'1.2-2' }}</td>
+                <td class="px-4 py-3 text-sm text-gray-900 text-center">{{ solicitud.plazo }}</td>
+                <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ solicitud.cuota | number:'1.2-2' }}</td>
+                <td class="px-4 py-3 text-sm text-right font-medium"
+                    [ngClass]="{
+                      'text-gray-900': solicitud.liquidez !== null,
+                      'text-gray-400': solicitud.liquidez === null
+                    }">
+                  {{ solicitud.liquidez !== null ? (solicitud.liquidez | number:'1.2-2') : '-' }}
+                </td>
+                <td class="px-4 py-3 text-sm text-center">
+                  <span *ngIf="solicitud.estado === '-'" class="text-gray-400">-</span>
+                  <span *ngIf="solicitud.estado !== '-'" 
+                        class="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white rounded"
+                        [ngClass]="{
+                          'bg-green-600': solicitud.estado === 'A',
+                          'bg-orange-500': solicitud.estado === 'P',
+                          'bg-red-600': solicitud.estado === 'R'
+                        }">
+                    {{ solicitud.estado }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-sm"
+                    [ngClass]="{
+                      'text-red-600': solicitud.observacion,
+                      'text-gray-600': !solicitud.observacion
+                    }">
+                  {{ solicitud.observacion || '-' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex justify-between items-center">
+          <p class="text-sm text-gray-600">
+            Total de solicitudes: <span class="font-semibold">{{ solicitudesImportadas.length }}</span>
+          </p>
+          <div class="flex gap-3">
+            <button (click)="cerrarModalImportacion()" class="px-4 py-2 text-sm bg-white text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
+              Cancelar
+            </button>
+            <button (click)="guardarSolicitudes()" class="px-4 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              Guardar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.routes.js';
 import personalRoutes from './routes/personal.routes.js';
 import emolumentosRoutes from './routes/emolumentos.routes.js';
+import entidadRoutes from './routes/entidad.routes.js';
+import liquidezRoutes from './routes/liquidez.routes.js';
 
 dotenv.config();
 
@@ -22,6 +24,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/auth', authRoutes);
 app.use('/api/personal', personalRoutes);
 app.use('/api/emolumentos', emolumentosRoutes);
+app.use('/api/entidades', entidadRoutes);
+app.use('/api/liquidez', liquidezRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {
