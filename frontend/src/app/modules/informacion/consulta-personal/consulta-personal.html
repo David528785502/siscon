@@ -17,7 +17,6 @@
           <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">DNI</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Tipo Contrato</th>
           <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Fecha Ingreso</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Estado</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Ingreso Neto</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Capacidad</th>
           <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Liquidez</th>
@@ -31,14 +30,9 @@
           <td class="px-4 py-3 text-sm text-gray-900">{{ persona.documento }}</td>
           <td class="px-4 py-3 text-sm text-gray-600">{{ getTipoContrato(persona.clas_cont) }}</td>
           <td class="px-4 py-3 text-sm text-gray-600">{{ formatDate(persona.fch_ing) }}</td>
-          <td class="px-4 py-3 text-sm">
-            <span [class]="persona.status === 1 ? 'px-2 py-1 text-xs rounded bg-green-100 text-green-800' : 'px-2 py-1 text-xs rounded bg-red-100 text-red-800'">
-              {{ getEstado(persona.status) }}
-            </span>
-          </td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(persona.ingreso_neto) }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(calcularCapacidad(persona.ingreso_neto)) }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">S/ {{ formatMoney(calcularLiquidez(persona.ingreso_neto)) }}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ formatMoney(persona.ingreso_neto) }}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ formatMoney(calcularCapacidad(persona.ingreso_neto)) }}</td>
+          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">{{ formatMoney(calcularLiquidez(persona.ingreso_neto)) }}</td>
         </tr>
       </tbody>
     </table>
