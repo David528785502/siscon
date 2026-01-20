@@ -6,6 +6,7 @@ import personalRoutes from './routes/personal.routes.js';
 import emolumentosRoutes from './routes/emolumentos.routes.js';
 import entidadRoutes from './routes/entidad.routes.js';
 import liquidezRoutes from './routes/liquidez.routes.js';
+import solicitudRoutes from './routes/solicitud.routes.js';
 
 dotenv.config();
 
@@ -14,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(cors({
-  origin: 'http://localhost:4200',
+  origin: ['http://localhost:4200', 'http://localhost', 'http://localhost:80'],
   credentials: true
 }));
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use('/api/personal', personalRoutes);
 app.use('/api/emolumentos', emolumentosRoutes);
 app.use('/api/entidades', entidadRoutes);
 app.use('/api/liquidez', liquidezRoutes);
+app.use('/api/solicitudes', solicitudRoutes);
 
 // Ruta de prueba
 app.get('/api/health', (req, res) => {

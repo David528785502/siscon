@@ -7,19 +7,6 @@ CREATE DATABASE IF NOT EXISTS siscon;
 USE siscon;
 
 -- ============================================
--- TABLA: usuario
--- ============================================
-CREATE TABLE IF NOT EXISTS usuario (
-    id INT(11) NOT NULL AUTO_INCREMENT,
-    codigo VARCHAR(50),
-    username VARCHAR(100),
-    password_hash VARCHAR(255),
-    email VARCHAR(150),
-    ultimo_acceso DATE,
-    PRIMARY KEY (id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- ============================================
 -- TABLA: sc_emol_p1 (Trabajadores 276)
 -- ============================================
 CREATE TABLE IF NOT EXISTS sc_emol_p1 (

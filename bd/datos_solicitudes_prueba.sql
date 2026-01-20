@@ -1,3 +1,6 @@
+--NO EJECUTAR EN PRODUCCION
+
+
 -- ============================================
 -- DATOS DE PRUEBA - SISTEMA DE PRÉSTAMOS
 -- ============================================
@@ -7,14 +10,15 @@ USE siscon;
 -- ============================================
 -- LIMPIAR DATOS EXISTENTES
 -- ============================================
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE sc_emol_p3;
-TRUNCATE TABLE sc_emol_p2;
-TRUNCATE TABLE sc_emol_p1;
-TRUNCATE TABLE sc_personal_detalle;
-TRUNCATE TABLE sc_personal;
-TRUNCATE TABLE usuario;
-SET FOREIGN_KEY_CHECKS = 1;
+
+--SET FOREIGN_KEY_CHECKS = 0;
+--TRUNCATE TABLE sc_emol_p3;
+--TRUNCATE TABLE sc_emol_p2;
+--TRUNCATE TABLE sc_emol_p1;
+--TRUNCATE TABLE sc_personal_detalle;
+--TRUNCATE TABLE sc_personal;
+--TRUNCATE TABLE usuario;
+--SET FOREIGN_KEY_CHECKS = 1;
 
 -- ============================================
 -- DATOS DE PRUEBA: usuario
@@ -127,16 +131,3 @@ INSERT INTO sc_emol_p1 (codigo, concepto, descripcion, importe, cantidad, period
 -- 4785102: Ingreso neto = 50,250.00, Liquidez = 20,100.00 (APROBADO para 20,100.00)
 -- 2295498: Ingreso neto = 218,750.00, Liquidez = 87,500.00 (APROBADO para 87,500.00)
 -- 1224708: Ingreso neto = 69,250.00, Liquidez = 27,700.00 (APROBADO para 27,700.00)
-
--- ============================================
--- DATOS DE PRUEBA: entidad (Bancos)
--- ============================================
-INSERT INTO entidad (codigo_entidad, nombre_entidad, activo) VALUES
-('155', 'Banco de Crédito del Perú', 1),
-('161', 'Banco BBVA', 1),
-('162', 'Banco Interbank', 1),
-('168', 'Scotiabank Perú', 1),
-('175', 'Banco Falabella', 1),
-('184', 'Banco Pichincha', 1),
-('221', 'Banco Ripley', 1),
-('160', 'Banco Prueba', 1);

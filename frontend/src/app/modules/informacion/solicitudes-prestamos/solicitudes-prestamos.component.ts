@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EntidadService } from '../../../core/services/entidad.service';
 import { LiquidezService } from '../../../core/services/liquidez.service';
+import { SolicitudService } from '../../../core/services/solicitud.service';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -28,15 +29,33 @@ export class SolicitudesPrestamosComponent {
   mostrarModalImportacion: boolean = false;
   solicitudesImportadas: any[] = [];
   fechaSolicitudFormateada: string = '';
+  guardando: boolean = false;
 
   constructor(
     private router: Router, 
     private entidadService: EntidadService,
-    private liquidezService: LiquidezService
+    private liquidezService: LiquidezService,
+    private solicitudService: SolicitudService
   ) {}
 
   ngOnInit(): void {
-    // TODO: Cargar solicitudes desde el backend
+    this.cargarSolicitudes();
+  }
+
+  cargarSolicitudes(): void {
+    this.loading = true;
+    this.solicitudService.obtenerSolicitudes().subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.solicitudes = response.data;
+        }
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar solicitudes:', error);
+        this.loading = false;
+      }
+    });
   }
 
   isMantenimiento(): boolean {
@@ -239,11 +258,44 @@ export class SolicitudesPrestamosComponent {
   cerrarModalImportacion(): void {
     this.mostrarModalImportacion = false;
     this.solicitudesImportadas = [];
+    this.guardando = false;
     this.cerrarValidacion();
   }
 
   guardarSolicitudes(): void {
-    // TODO: Implementar guardado en BD
-    console.log('Guardando solicitudes...', this.solicitudesImportadas);
+    if (this.guardando) return;
+
+    this.guardando = true;
+
+    this.solicitudService.guardarSolicitudes(
+      this.solicitudesImportadas,
+      this.codigoEntidad,
+      this.fechaSolicitud
+    ).subscribe({
+      next: (response) => {
+        this.guardando = false;
+        
+        if (response.success) {
+          alert(`✓ ${response.message}\n\nGuardadas: ${response.data.guardadas}\nErrores: ${response.data.errores}`);
+          
+          if (response.data.detalleErrores.length > 0) {
+            const errores = response.data.detalleErrores
+              .map((e: any) => `- Código ${e.codigo}: ${e.error}`)
+              .join('\n');
+            alert(`Errores encontrados:\n${errores}`);
+          }
+          
+          this.cerrarModalImportacion();
+          this.cargarSolicitudes();
+        } else {
+          alert(`✗ Error: ${response.message}`);
+        }
+      },
+      error: (error) => {
+        this.guardando = false;
+        console.error('Error al guardar solicitudes:', error);
+        alert(`✗ Error al guardar solicitudes: ${error.error?.message || error.message}`);
+      }
+    });
   }
 }

@@ -7,3 +7,6 @@
 
 # Logs
 *.log
+
+#sql
+datos_solicitudes_prueba.sql
