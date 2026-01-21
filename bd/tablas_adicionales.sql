@@ -1,4 +1,3 @@
-
 -- ============================================
 -- TABLAS A IMPLEMENTAR
 -- ============================================
@@ -51,7 +50,6 @@ CREATE TABLE IF NOT EXISTS solicitud (
     PRIMARY KEY (id),
     UNIQUE KEY uk_codigo_solicitud (codigo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 -- ============================================
 -- DATOS DE PRUEBA: entidad (Bancos)

@@ -320,6 +320,16 @@
 
       <!-- Footer -->
       <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <!-- Mensaje de éxito -->
+        <div *ngIf="mensajeExito" class="mb-4 p-4 bg-green-50 border-l-4 border-green-500 rounded">
+          <p class="text-sm text-green-800 font-medium">{{ mensajeExito }}</p>
+        </div>
+
+        <!-- Mensaje de error -->
+        <div *ngIf="mensajeError" class="mb-4 p-4 bg-red-50 border-l-4 border-red-500 rounded">
+          <p class="text-sm text-red-800 font-medium">{{ mensajeError }}</p>
+        </div>
+
         <div class="flex justify-between items-center">
           <p class="text-sm text-gray-600">
             Total de solicitudes: <span class="font-semibold">{{ solicitudesImportadas.length }}</span>

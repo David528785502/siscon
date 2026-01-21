@@ -30,6 +30,11 @@ export class SolicitudesPrestamosComponent {
   solicitudesImportadas: any[] = [];
   fechaSolicitudFormateada: string = '';
   guardando: boolean = false;
+  
+  // Mensajes
+  mensajeExito: string = '';
+  mensajeError: string = '';
+  detalleErrores: any[] = [];
 
   constructor(
     private router: Router, 
@@ -259,6 +264,9 @@ export class SolicitudesPrestamosComponent {
     this.mostrarModalImportacion = false;
     this.solicitudesImportadas = [];
     this.guardando = false;
+    this.mensajeExito = '';
+    this.mensajeError = '';
+    this.detalleErrores = [];
     this.cerrarValidacion();
   }
 
@@ -276,25 +284,25 @@ export class SolicitudesPrestamosComponent {
         this.guardando = false;
         
         if (response.success) {
-          alert(`✓ ${response.message}\n\nGuardadas: ${response.data.guardadas}\nErrores: ${response.data.errores}`);
+          const tieneErrores = response.data.errores > 0;
           
-          if (response.data.detalleErrores.length > 0) {
-            const errores = response.data.detalleErrores
-              .map((e: any) => `- Código ${e.codigo}: ${e.error}`)
-              .join('\n');
-            alert(`Errores encontrados:\n${errores}`);
+          if (tieneErrores) {
+            this.mensajeError = `No se pudo guardar. ${response.data.errores} solicitudes ya están registradas.`;
+          } else {
+            this.mensajeExito = `${response.data.guardadas} solicitudes guardadas correctamente.`;
+            setTimeout(() => {
+              this.cerrarModalImportacion();
+              this.cargarSolicitudes();
+            }, 2000);
           }
-          
-          this.cerrarModalImportacion();
-          this.cargarSolicitudes();
         } else {
-          alert(`✗ Error: ${response.message}`);
+          this.mensajeError = response.message;
         }
       },
       error: (error) => {
         this.guardando = false;
         console.error('Error al guardar solicitudes:', error);
-        alert(`✗ Error al guardar solicitudes: ${error.error?.message || error.message}`);
+        this.mensajeError = 'Error al conectar con el servidor.';
       }
     });
   }
