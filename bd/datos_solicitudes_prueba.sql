@@ -38,19 +38,10 @@ INSERT INTO sc_personal (codigo, posicion, nombres, paterno, materno, nombre, ar
 ('4785102', 'POS009', 'LILIANA ROJAS ALVIAR', 'ROJAS', 'ALVIAR', 'LILIANA', '03', '0003', 1, '01', '47851020', '2018-11-18', 'GP009', '2025-12', 1),
 ('2295498', 'POS010', 'JORGE JESUS MATEO RAMIREZ', 'MATEO', 'RAMIREZ', 'JORGE JESUS', '01', '0001', 1, '01', '22954980', '2016-04-08', 'GP010', '2025-12', 1),
 ('1224708', 'POS011', 'OLGA ALICIA AQUINO HUAMAN DE CORDOVA', 'AQUINO', 'HUAMAN DE CORDOVA', 'OLGA ALICIA', '02', '0002', 1, '01', '12247080', '2017-02-14', 'GP011', '2025-12', 1);
+'1', '14573424', '3', 'P2', '20000543', 'RP Sab Pol Metrop Of Adm', '0208', '', '40000204', 'PROFESIONAL', '01', '10223927', '2004-12-20', 'PQ.R.PRIALE 276 LA', '4', 'P1', '1', '1961-04-15', '0', 'PROFUTUR', '523841AACDE7', '1', 'P2', '0200', '0000-00-00', '0.00', '01-2020', '0', '', '', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00', 'P2'
 
--- ============================================
--- INSERTAR DETALLES EN sc_personal_detalle
--- ============================================
-INSERT INTO sc_personal_detalle (codigo, grup_per, are_nom, clave_org, area, division, division_pv, funcion, cargo, id_doc, documento, fch_ing, direccion, subg_prof, clas_cont, rh, fch_nac, est_civ, afp, cuspp, tip_com, grup_prof, sociedad, vacaciones, importe, periodo, anulado, clave_org_pv, usr_eli, fch_eli, usr_reg, fch_reg, nivel) VALUES
-('4086702', '4', '01', 'ORG00004', 'AREA DE ENFERMERIA', '0001', NULL, 'FUN004', 'ENFERMERO(A) CAS', '01', '40867020', '2018-03-15', 'AV. LOS PINOS 234', 1, 'P4', 1, '1988-06-15', 1, 'PRIMA', '408670200001', 1, 'GP004', 'SOC1', NULL, 3200.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N1'),
-('3247849', '3', '02', 'ORG00005', 'AREA ADMINISTRATIVA', '0002', NULL, 'FUN005', 'ASISTENTE 728', '01', '32478490', '2019-05-20', 'JR. SAN MARTIN 567', 1, 'P9', 2, '1990-09-22', 1, 'HABITAT', '324784900001', 1, 'GP005', 'SOC1', NULL, 2900.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N2'),
-('1672786', '6', '03', 'ORG00006', 'AREA DE LABORATORIO', '0003', NULL, 'FUN006', 'TECNICO 276', '01', '16727860', '2020-01-10', 'AV. UNIVERSITARIA 890', 1, 'P8', 1, '1987-12-10', 0, 'INTEGRA', '167278600001', 1, 'GP006', 'SOC1', '2026-03-20', 2100.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N3'),
-('1561900', '6', '01', 'ORG00007', 'AREA DE MEDICINA', '0001', NULL, 'FUN007', 'MEDICO 276', '01', '15619000', '2017-07-12', 'AV. GRAU 123', 1, 'P8', 1, '1980-03-28', 1, 'PROFUTURO', '156190000001', 1, 'GP007', 'SOC1', NULL, 6500.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N1'),
-('4028171', '4', '02', 'ORG00008', 'AREA DE FARMACIA', '0002', NULL, 'FUN008', 'QUIMICO FARMACEUTICO CAS', '01', '40281710', '2019-09-25', 'JR. COMERCIO 456', 1, 'P4', 1, '1985-11-05', 1, 'HABITAT', '402817100001', 1, 'GP008', 'SOC1', NULL, 4800.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N2'),
-('4785102', '4', '03', 'ORG00009', 'AREA DE NUTRICION', '0003', NULL, 'FUN009', 'NUTRICIONISTA CAS', '01', '47851020', '2018-11-18', 'AV. AREQUIPA 789', 1, 'P4', 2, '1992-07-18', 0, 'PRIMA', '478510200001', 1, 'GP009', 'SOC1', '2026-05-15', 4200.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N3'),
-('2295498', '2', '01', 'ORG00010', 'AREA DE CIRUGIA', '0001', NULL, 'FUN010', 'CIRUJANO 728', '01', '22954980', '2016-04-08', 'AV. BRASIL 321', 1, 'P9', 1, '1978-02-25', 1, 'INTEGRA', '229549800001', 1, 'GP010', 'SOC1', NULL, 12000.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N1'),
-('1224708', '6', '02', 'ORG00011', 'AREA DE OBSTETRICIA', '0002', NULL, 'FUN011', 'OBSTETRIZ 276', '01', '12247080', '2017-02-14', 'JR. LIMA 654', 1, 'P8', 1, '1983-08-12', 1, 'PROFUTURO', '122470800001', 1, 'GP011', 'SOC1', '2026-04-10', 5200.00, '2025-12', 0, NULL, NULL, NULL, 'admin', '2026-01-19 10:00:00', 'N2');
+
+
 
 -- ============================================
 -- EMOLUMENTOS - sc_emol_p3 (Trabajadores CAS: 4086702, 4028171, 4785102)

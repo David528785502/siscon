@@ -2,10 +2,8 @@ import pool from '../config/database.js';
 
 export const getPersonal = async (req, res) => {
   try {
-    // Calcular periodo del mes anterior
-    const today = new Date();
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
-    const periodo = `${lastMonth.getFullYear()}-${String(lastMonth.getMonth() + 1).padStart(2, '0')}`;
+    // Usar periodo de prueba: 10-2025 (formato MM-YYYY)
+    const periodo = '10-2025';
 
     const query = `
       SELECT 
@@ -52,12 +50,12 @@ export const getPersonal = async (req, res) => {
         ) AS ingreso_neto
       FROM sc_personal p
       LEFT JOIN sc_personal_detalle pd ON p.codigo = pd.codigo
-      WHERE p.act = 1
+      WHERE p.periodo = ?
       ORDER BY p.paterno, p.materno, p.nombres
       LIMIT 100
     `;
 
-    const [rows] = await pool.query(query, [periodo, periodo, periodo]);
+    const [rows] = await pool.query(query, [periodo, periodo, periodo, periodo]);
 
     res.json({
       success: true,

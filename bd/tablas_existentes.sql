@@ -96,10 +96,10 @@ CREATE TABLE IF NOT EXISTS sc_personal (
 -- ============================================
 CREATE TABLE IF NOT EXISTS sc_personal_detalle (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    codigo CHAR(8) NOT NULL, -- 6=276 asistencial, 7=276 administrativo, 2=728 asistencial, 3=728 administrativo, 4=cas asistencial, 5=cas administrativo, 8=practicantes, E=cas covid, F=cas emerg.
-    grup_per CHAR(1) NOT NULL,
+    codigo CHAR(8) NOT NULL,
+    grup_per CHAR(1) NOT NULL, -- 6=276 asistencial, 7=276 administrativo, 2=728 asistencial, 3=728 administrativo, 4=cas asistencial, 5=cas administrativo, 8=practicantes, E=cas covid, F=cas emerg.
     are_nom CHAR(2) NOT NULL,
-    clave_org CHAR(8) NOT NULL,
+    clav_org CHAR(8) NOT NULL,
     area VARCHAR(60) NOT NULL,
     division CHAR(4) NOT NULL,
     division_pv CHAR(4) NULL DEFAULT NULL,
@@ -110,10 +110,10 @@ CREATE TABLE IF NOT EXISTS sc_personal_detalle (
     fch_ing DATE NOT NULL,
     direccion VARCHAR(200) NOT NULL,
     subg_prof INT(1) NOT NULL,
-    clas_cont CHAR(2) NOT NULL, -- P8=Nombrado, P9=Contratado, P1=Indeterminado, P2=Fijo, P5=Suplencia, P3=Funcionarios, P4=CAS, P6=P.Profesional, PB=Residente, PA=SERUM
-    rh INT(1) NOT NULL,
+    clas_cont CHAR(2) NOT NULL COMMENT 'P8=Nombrado, P9=Contratado, P1=Indeterminado, P2=Fijo, P5=Suplencia, P3=Funcionarios, P4=CAS, P6=P.Profesional, PB=Residente, PA=SERUM',
+    sexo INT(1) NOT NULL COMMENT '1=Masculino, 2=Femenino',
     fch_nac DATE NOT NULL,
-    est_civ INT(1) NOT NULL, -- 0=soltero, 1=Casado, 2=Viudo, 3=Divorciado, 6=Concubino, 7=Conviviente
+    est_civ INT(1) NOT NULL COMMENT '0=soltero, 1=Casado, 2=Viudo, 3=Divorciado, 6=Concubino, 7=Conviviente',
     afp VARCHAR(10) NOT NULL,
     cuspp CHAR(12) NOT NULL,
     tip_com INT(1) NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS sc_personal_detalle (
     importe DECIMAL(10,2) NULL DEFAULT NULL,
     periodo CHAR(7) NOT NULL,
     anulado INT(1) NOT NULL,
-    clave_org_pv CHAR(8) NULL DEFAULT NULL,
+    clav_org_pv CHAR(8) NULL DEFAULT NULL,
     usr_eli VARCHAR(16) NULL DEFAULT NULL,
     fch_eli DATETIME NULL DEFAULT NULL,
     usr_reg VARCHAR(16) NULL DEFAULT NULL,
