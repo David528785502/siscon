@@ -43,19 +43,19 @@ export const getPersonal = async (req, res) => {
     
     console.log('Backend - WHERE:', whereClause, 'Params:', queryParams);
 
-    // Query de conteo: solo un registro por código
+    // Query de conteo: tabla optimizada
     const countQuery = `
-      SELECT COUNT(DISTINCT codigo) as total
-      FROM sc_personal
+      SELECT COUNT(*) as total
+      FROM sc_personal_lista
       ${whereClause}
     `;
 
     const [[{ total }]] = await pool.query(countQuery, queryParams);
     const totalPaginas = Math.ceil(total / limiteNum);
 
-    console.log('Backend - Total registros únicos:', total, 'Total páginas:', totalPaginas);
+    console.log('Backend - Total registros:', total, 'Total páginas:', totalPaginas);
 
-    // Query principal: un registro por código (toma el más reciente por periodo)
+    // Query principal: tabla optimizada (sin GROUP BY)
     const dataQuery = `
       SELECT 
         codigo,
@@ -63,21 +63,17 @@ export const getPersonal = async (req, res) => {
         nombres AS nombre_completo,
         status,
         fch_ing
-      FROM sc_personal
+      FROM sc_personal_lista
       ${whereClause}
-      GROUP BY codigo
       ORDER BY nombres
       LIMIT ? OFFSET ?
     `;
 
-    // Traer 1 registro extra para saber si hay más páginas
-    const [rows] = await pool.query(dataQuery, [...queryParams, limiteNum + 1, offset]);
+    // Ejecutar query
+    const [datos] = await pool.query(dataQuery, [...queryParams, limiteNum, offset]);
     
     // Verificar si hay más páginas
-    const hayMasPaginas = rows.length > limiteNum;
-    
-    // Eliminar el registro extra si existe
-    const datos = hayMasPaginas ? rows.slice(0, limiteNum) : rows;
+    const hayMasPaginas = paginaNum < totalPaginas;
     
     console.log('Registros en página:', datos.length, 'Hay más:', hayMasPaginas);
 

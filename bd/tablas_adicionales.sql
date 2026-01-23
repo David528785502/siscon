@@ -72,3 +72,20 @@ INSERT INTO usuario (codigo, username, password_hash, email, ultimo_acceso) VALU
 
 --usuario: admin
 --contraseña1: admin
+
+
+-- ============================================
+-- TABLA: personal_lista
+-- ============================================
+CREATE TABLE sc_personal_lista (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  codigo VARCHAR(20) NOT NULL UNIQUE,
+  nombres VARCHAR(255),
+  documento VARCHAR(20),
+  fch_ing DATE,
+  status TINYINT DEFAULT 0,
+  grup_per CHAR(1) NOT NULL,
+  INDEX idx_codigo (codigo),
+  INDEX idx_nombres (nombres),
+  INDEX idx_documento (documento)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
