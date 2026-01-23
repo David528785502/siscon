@@ -23,6 +23,23 @@ export class ConsultaPersonalComponent implements OnInit {
     totalDescuentos: 0,
     totalNeto: 0
   };
+  
+  // Paginación
+  paginaActual: number = 1;
+  itemsPorPagina: number = 10;
+  hayMasPaginas: boolean = false;
+  totalPaginas: number = 0;
+  
+  meses: string[] = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+  mesesCompletos: string[] = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  mostrarPeriodoSelector: boolean = false;
+  
+  filtros = {
+    nombre: '',
+    dni: '',
+    mes: '',
+    anio: ''
+  };
 
   tiposContrato: { [key: string]: string } = {
     'P8': 'Nombrado',
@@ -43,18 +60,77 @@ export class ConsultaPersonalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.calcularPeriodoAnterior();
     this.loadPersonal();
+  }
+
+  calcularPeriodoAnterior(): void {
+    const hoy = new Date();
+    let mes = hoy.getMonth(); // 0-11 (Enero es 0)
+    let anio = hoy.getFullYear();
+    
+    // Mes anterior
+    if (mes === 0) {
+      // Si es enero, ir a diciembre del año anterior
+      mes = 12;
+      anio = anio - 1;
+    }
+    
+    this.filtros.mes = this.formatMes(mes);
+    this.filtros.anio = anio.toString();
+  }
+
+  formatMes(mes: number): string {
+    return mes.toString().padStart(2, '0');
+  }
+
+  seleccionarMes(mes: number): void {
+    this.filtros.mes = this.formatMes(mes);
+    this.mostrarPeriodoSelector = false;
+  }
+
+  togglePeriodoSelector(): void {
+    this.mostrarPeriodoSelector = !this.mostrarPeriodoSelector;
+  }
+
+  getNombreMes(mes: string): string {
+    if (!mes) return 'Seleccione';
+    const mesNum = parseInt(mes) - 1;
+    return this.mesesCompletos[mesNum] || 'Seleccione';
+  }
+
+  cambiarAnio(incremento: number): void {
+    const anioActual = parseInt(this.filtros.anio);
+    this.filtros.anio = (anioActual + incremento).toString();
   }
 
   loadPersonal(): void {
     this.loading = true;
     this.errorMessage = '';
 
-    this.personalService.getPersonal().subscribe({
+    // SIEMPRE construir periodo en formato MM-YYYY
+    // Si no hay mes/año en filtros, usar el calculado por defecto
+    if (!this.filtros.mes || !this.filtros.anio) {
+      this.calcularPeriodoAnterior();
+    }
+    
+    const periodo = `${this.filtros.mes}-${this.filtros.anio}`;
+    console.log('Frontend - Periodo enviado:', periodo, 'Filtros:', this.filtros);
+
+    this.personalService.getPersonal(
+      this.filtros.nombre, 
+      this.filtros.dni, 
+      periodo,
+      this.paginaActual,
+      this.itemsPorPagina
+    ).subscribe({
       next: (response) => {
         this.loading = false;
         if (response.success) {
           this.personal = response.data;
+          this.hayMasPaginas = response.hayMasPaginas || false;
+          this.totalPaginas = response.totalPaginas || 0;
+          console.log('Registros cargados:', this.personal.length, 'Página:', this.paginaActual, 'de', this.totalPaginas);
         }
       },
       error: (error) => {
@@ -65,8 +141,47 @@ export class ConsultaPersonalComponent implements OnInit {
     });
   }
 
-  getTipoContrato(codigo: string): string {
-    return this.tiposContrato[codigo] || codigo;
+  aplicarFiltros(): void {
+    this.paginaActual = 1; // Resetear a página 1 al aplicar filtros
+    this.mostrarPeriodoSelector = false;
+    this.loadPersonal();
+  }
+
+  limpiarFiltros(): void {
+    this.filtros.nombre = '';
+    this.filtros.dni = '';
+    this.calcularPeriodoAnterior();
+    this.paginaActual = 1;
+    this.mostrarPeriodoSelector = false;
+    this.loadPersonal();
+  }
+
+  // Métodos de paginación
+  getRangoInicio(): number {
+    return (this.paginaActual - 1) * this.itemsPorPagina + 1;
+  }
+
+  getRangoFin(): number {
+    return (this.paginaActual - 1) * this.itemsPorPagina + this.personal.length;
+  }
+
+  irAPaginaAnterior(): void {
+    if (this.paginaActual > 1) {
+      this.paginaActual--;
+      this.loadPersonal();
+    }
+  }
+
+  irAPaginaSiguiente(): void {
+    if (this.hayMasPaginas) {
+      this.paginaActual++;
+      this.loadPersonal();
+    }
+  }
+
+  cambiarItemsPorPagina(): void {
+    this.paginaActual = 1;
+    this.loadPersonal();
   }
 
   getEstado(status: number): string {
