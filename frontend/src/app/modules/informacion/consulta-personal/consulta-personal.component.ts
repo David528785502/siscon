@@ -16,6 +16,7 @@ export class ConsultaPersonalComponent implements OnInit {
   loadingModal: boolean = false;
   selectedPersona: any = null;
   periodo: string = '';
+  tabActivo: string = 'emolumentos'; // 'emolumentos' o 'capacidad'
   emolumentos: any = {
     ingresos: [],
     descuentos: [],
@@ -236,6 +237,7 @@ export class ConsultaPersonalComponent implements OnInit {
   cerrarModal(): void {
     this.showModal = false;
     this.selectedPersona = null;
+    this.tabActivo = 'emolumentos';
     this.emolumentos = {
       ingresos: [],
       descuentos: [],

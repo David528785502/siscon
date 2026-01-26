@@ -82,7 +82,6 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
   // En JWT stateless, el logout se maneja en el frontend eliminando el token
-  // Aquí podemos agregar lógica adicional si es necesario (ej: blacklist de tokens)
   res.json({
     success: true,
     message: 'Sesión cerrada exitosamente'
@@ -91,7 +90,6 @@ export const logout = async (req, res) => {
 
 export const verifyToken = async (req, res) => {
   // Este endpoint verifica si el token es válido
-  // Si llegó aquí, el middleware ya validó el token
   res.json({
     success: true,
     message: 'Token válido',

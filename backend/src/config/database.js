@@ -12,13 +12,19 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-  charset: 'utf8mb4'
+  charset: 'utf8mb4',
+  connectAttributes: {
+    _client_name: 'siscon-backend',
+    _client_version: '1.0.0'
+  }
 });
 
 // Verificar conexión
 pool.getConnection()
-  .then(connection => {
+  .then(async connection => {
     console.log('[OK] Conexión a MySQL establecida correctamente');
+    await connection.query("SET NAMES 'utf8mb4'");
+    await connection.query("SET CHARACTER SET utf8mb4");
     connection.release();
   })
   .catch(err => {

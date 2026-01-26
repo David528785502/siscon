@@ -1,4 +1,5 @@
 import pool from '../config/database.js';
+import { limpiarTexto } from '../utils/textHelper.js';
 
 export const getEmolumentosByCodigo = async (req, res) => {
   try {
@@ -46,7 +47,10 @@ export const getEmolumentosByCodigo = async (req, res) => {
         ORDER BY orden
       `;
       const [rows] = await pool.query(query, [codigo, periodo]);
-      allRows = rows;
+      allRows = rows.map(row => ({
+        ...row,
+        descripcion: limpiarTexto(row.descripcion)
+      }));
     }
 
     // Separar en ingresos y descuentos (concepto empieza con 9=ingresos, 8=descuentos)

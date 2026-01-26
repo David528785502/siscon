@@ -203,12 +203,39 @@
     </div>
 
     <!-- Contenido del Modal -->
-    <div class="p-6">
+    <div class="p-6 h-[600px] overflow-y-auto">
+      <!-- Tabs -->
+      <div class="border-b border-gray-200 mb-6">
+        <nav class="-mb-px flex space-x-8">
+          <button
+            (click)="tabActivo = 'emolumentos'"
+            [class.border-blue-500]="tabActivo === 'emolumentos'"
+            [class.text-blue-600]="tabActivo === 'emolumentos'"
+            [class.border-transparent]="tabActivo !== 'emolumentos'"
+            [class.text-gray-500]="tabActivo !== 'emolumentos'"
+            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300"
+          >
+            Ingresos y Descuentos
+          </button>
+          <button
+            (click)="tabActivo = 'capacidad'"
+            [class.border-blue-500]="tabActivo === 'capacidad'"
+            [class.text-blue-600]="tabActivo === 'capacidad'"
+            [class.border-transparent]="tabActivo !== 'capacidad'"
+            [class.text-gray-500]="tabActivo !== 'capacidad'"
+            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300"
+          >
+            Capacidad de Endeudamiento
+          </button>
+        </nav>
+      </div>
+
       <div *ngIf="loadingModal" class="text-center py-8">
         <p class="text-gray-600">Cargando detalle...</p>
       </div>
 
-      <div *ngIf="!loadingModal">
+      <!-- Tab: Ingresos y Descuentos -->
+      <div *ngIf="!loadingModal && tabActivo === 'emolumentos'">
         <!-- Tablas lado a lado -->
         <div class="grid grid-cols-2 gap-6 mb-6">
           <!-- Tabla de Ingresos (Izquierda) -->
@@ -227,11 +254,11 @@
                   <tr *ngFor="let ingreso of emolumentos.ingresos" class="border-b hover:bg-gray-50">
                     <td class="px-4 py-2 text-sm text-gray-900">{{ ingreso.concepto }}</td>
                     <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.descripcion }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(ingreso.importe) }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(ingreso.importe) }}</td>
                   </tr>
                   <tr class="bg-green-100 font-bold">
                     <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Ingresos:</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalIngresos) }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(emolumentos.totalIngresos) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -254,11 +281,11 @@
                   <tr *ngFor="let descuento of emolumentos.descuentos" class="border-b hover:bg-gray-50">
                     <td class="px-4 py-2 text-sm text-gray-900">{{ descuento.concepto }}</td>
                     <td class="px-4 py-2 text-sm text-gray-700">{{ descuento.descripcion }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(descuento.importe) }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(descuento.importe) }}</td>
                   </tr>
                   <tr class="bg-red-100 font-bold">
                     <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Descuentos:</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalDescuentos) }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(emolumentos.totalDescuentos) }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -266,21 +293,65 @@
           </div>
         </div>
 
-        <!-- Resumen -->
-        <div class="bg-blue-50 p-4 rounded">
-          <div class="flex justify-between items-center">
-            <span class="text-lg font-bold text-gray-900">Ingreso Neto:</span>
-            <span class="text-xl font-bold text-blue-700">S/ {{ formatMoney(emolumentos.totalNeto) }}</span>
+      </div>
+
+      <!-- Tab: Capacidad de Endeudamiento -->
+      <div *ngIf="!loadingModal && tabActivo === 'capacidad'">
+        <!-- Dos columnas -->
+        <div class="grid grid-cols-2 gap-6">
+          <!-- Columna Izquierda: Cálculo de Ingreso -->
+          <div class="border rounded p-4">
+            <div class="space-y-3">
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(+) Ingresos Permanentes</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Descuentos de Ley</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Descuentos Judiciales</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Descuentos Institucionales</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Descuentos Sindicales</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 bg-blue-50 font-bold">
+                <span>Ingreso:</span>
+                <span>S/ {{ formatMoney(0) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Cálculo de Liquidez -->
+          <div class="border rounded p-4">
+            <div class="space-y-3">
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(*) Capacidad</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Descuentos de Terceros</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 border-b">
+                <span class="text-gray-700">(-) Solicitud en Trámite</span>
+                <span class="font-semibold">S/ {{ formatMoney(0) }}</span>
+              </div>
+              <div class="flex justify-between py-2 bg-green-50 font-bold text-lg">
+                <span>Liquidez:</span>
+                <span class="text-green-700">S/ {{ formatMoney(0) }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-
-    <!-- Footer del Modal -->
-    <div class="p-4 border-t bg-gray-50 flex justify-end">
-      <button (click)="cerrarModal()" class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700">
-        Cerrar
-      </button>
     </div>
   </div>
 </div>

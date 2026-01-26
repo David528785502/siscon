@@ -1,4 +1,5 @@
 import pool from '../config/database.js';
+import { limpiarTexto } from '../utils/textHelper.js';
 
 export const getPersonal = async (req, res) => {
   try {
@@ -73,6 +74,12 @@ export const getPersonal = async (req, res) => {
     // Ejecutar query
     const [datos] = await pool.query(dataQuery, [...queryParams, limiteNum, offset]);
     
+    // Limpiar textos antes de enviar
+    const datosLimpios = datos.map(row => ({
+      ...row,
+      nombre_completo: limpiarTexto(row.nombre_completo)
+    }));
+    
     // Verificar si hay más páginas
     const hayMasPaginas = paginaNum < totalPaginas;
     
@@ -80,7 +87,7 @@ export const getPersonal = async (req, res) => {
 
     res.json({
       success: true,
-      data: datos,
+      data: datosLimpios,
       hayMasPaginas: hayMasPaginas,
       pagina: paginaNum,
       limite: limiteNum,
