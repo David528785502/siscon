@@ -62,7 +62,8 @@ export const getPersonal = async (req, res) => {
         documento,
         nombres AS nombre_completo,
         status,
-        fch_ing
+        fch_ing,
+        grup_per
       FROM sc_personal_lista
       ${whereClause}
       ORDER BY nombres

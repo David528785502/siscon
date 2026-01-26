@@ -217,7 +217,8 @@ export class ConsultaPersonalComponent implements OnInit {
     this.showModal = true;
     this.loadingModal = true;
 
-    this.emolumentosService.getEmolumentosByCodigo(persona.codigo).subscribe({
+    const periodo = `${this.filtros.mes}-${this.filtros.anio}`;
+    this.emolumentosService.getEmolumentosByCodigo(persona.codigo, periodo, persona.grup_per).subscribe({
       next: (response) => {
         this.loadingModal = false;
         if (response.success) {

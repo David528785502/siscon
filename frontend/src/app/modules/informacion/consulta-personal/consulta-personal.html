@@ -208,58 +208,61 @@
         <p class="text-gray-600">Cargando detalle...</p>
       </div>
 
-      <div *ngIf="!loadingModal" class="space-y-6">
-        <!-- Tabla de Ingresos -->
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Ingresos</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full border">
-              <thead class="bg-green-50">
-                <tr>
-                  <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
-                  <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
-                  <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let ingreso of emolumentos.ingresos" class="border-b hover:bg-gray-50">
-                  <td class="px-4 py-2 text-sm text-gray-900">{{ ingreso.concepto }}</td>
-                  <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.descripcion }}</td>
-                  <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(ingreso.importe) }}</td>
-                </tr>
-                <tr class="bg-green-100 font-bold">
-                  <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Ingresos:</td>
-                  <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalIngresos) }}</td>
-                </tr>
-              </tbody>
-            </table>
+      <div *ngIf="!loadingModal">
+        <!-- Tablas lado a lado -->
+        <div class="grid grid-cols-2 gap-6 mb-6">
+          <!-- Tabla de Ingresos (Izquierda) -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Ingresos</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full border">
+                <thead class="bg-green-50">
+                  <tr>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
+                    <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let ingreso of emolumentos.ingresos" class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2 text-sm text-gray-900">{{ ingreso.concepto }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.descripcion }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(ingreso.importe) }}</td>
+                  </tr>
+                  <tr class="bg-green-100 font-bold">
+                    <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Ingresos:</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalIngresos) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
 
-        <!-- Tabla de Descuentos -->
-        <div>
-          <h3 class="text-lg font-semibold text-gray-900 mb-3">Descuentos</h3>
-          <div class="overflow-x-auto">
-            <table class="w-full border">
-              <thead class="bg-red-50">
-                <tr>
-                  <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
-                  <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
-                  <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let descuento of emolumentos.descuentos" class="border-b hover:bg-gray-50">
-                  <td class="px-4 py-2 text-sm text-gray-900">{{ descuento.concepto }}</td>
-                  <td class="px-4 py-2 text-sm text-gray-700">{{ descuento.descripcion }}</td>
-                  <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(descuento.importe) }}</td>
-                </tr>
-                <tr class="bg-red-100 font-bold">
-                  <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Descuentos:</td>
-                  <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalDescuentos) }}</td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Tabla de Descuentos (Derecha) -->
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-3">Descuentos</h3>
+            <div class="overflow-x-auto">
+              <table class="w-full border">
+                <thead class="bg-red-50">
+                  <tr>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
+                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
+                    <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let descuento of emolumentos.descuentos" class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2 text-sm text-gray-900">{{ descuento.concepto }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-700">{{ descuento.descripcion }}</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(descuento.importe) }}</td>
+                  </tr>
+                  <tr class="bg-red-100 font-bold">
+                    <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Descuentos:</td>
+                    <td class="px-4 py-2 text-sm text-gray-900 text-right">S/ {{ formatMoney(emolumentos.totalDescuentos) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 

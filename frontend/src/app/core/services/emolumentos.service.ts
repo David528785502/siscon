@@ -11,12 +11,16 @@ export class EmolumentosService {
 
   constructor(private http: HttpClient) {}
 
-  getEmolumentosByCodigo(codigo: string): Observable<any> {
+  getEmolumentosByCodigo(codigo: string, periodo?: string, grupPer?: string): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
 
-    return this.http.get(`${this.apiUrl}/${codigo}`, { headers });
+    let params: any = {};
+    if (periodo) params.periodo = periodo;
+    if (grupPer) params.grup_per = grupPer;
+
+    return this.http.get(`${this.apiUrl}/${codigo}`, { headers, params });
   }
 }
