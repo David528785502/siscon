@@ -194,7 +194,7 @@ export class SolicitudesPrestamosComponent {
 
       this.solicitudesImportadas.push({
         numero: index + 1,
-        codigo: codigo.trim(),
+        codigo: '1' + codigo.trim(), // Agregar "1" al inicio del código, quizas lo se cambie el formato, RECORDAR
         nombreCompleto: nombreCompleto.trim(),
         monto,
         plazo,
@@ -220,23 +220,22 @@ export class SolicitudesPrestamosComponent {
           const solicitud = this.solicitudesImportadas[index];
           
           if (resultado.existe) {
-            // Calcular liquidez con la misma fórmula que consulta personal
-            const ingresoNeto = resultado.ingresoNeto || 0;
-            const liquidez = Number(ingresoNeto) * 0.40;
+            // Usar liquidez calculada en el backend con el algoritmo completo
+            const liquidez = resultado.liquidez || 0;
             
             solicitud.liquidez = parseFloat(liquidez.toFixed(2));
             
-            // Determinar estado y observación según la liquidez
+            // Determinar estado y observación según la liquidez vs cuota
             if (liquidez === 0) {
               // Rechazado: sin liquidez
               solicitud.estado = 'R';
               solicitud.observacion = 'No tiene liquidez disponible';
-            } else if (liquidez < solicitud.monto) {
-              // Parcial: liquidez menor al monto solicitado
+            } else if (liquidez < solicitud.cuota) {
+              // Parcial: liquidez menor a la cuota solicitada
               solicitud.estado = 'P';
-              solicitud.observacion = `Solicitó S/ ${solicitud.monto.toFixed(2)} pero solo tiene capacidad para S/ ${liquidez.toFixed(2)}`;
+              solicitud.observacion = `Solicitó cuota de S/ ${solicitud.cuota.toFixed(2)} pero solo tiene capacidad para S/ ${liquidez.toFixed(2)}`;
             } else {
-              // Aprobado: liquidez mayor o igual al monto
+              // Aprobado: liquidez mayor o igual a la cuota
               solicitud.estado = 'A';
               solicitud.observacion = '';
             }

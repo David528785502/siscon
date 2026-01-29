@@ -110,7 +110,9 @@ CREATE TABLE IF NOT EXISTS sc_personal_detalle (
     fch_ing DATE NOT NULL,
     direccion VARCHAR(200) NOT NULL,
     subg_prof INT(1) NOT NULL,
-    clas_cont CHAR(2) NOT NULL COMMENT 'P8=Nombrado, P9=Contratado, P1=Indeterminado, P2=Fijo, P5=Suplencia, P3=Funcionarios, P4=CAS, P6=P.Profesional, PB=Residente, PA=SERUM',
+    clas_cont CHAR(2) NOT NULL, 
+    --P8=Nombrado, P9=Contratado, P1=Indeterminado, P2=Fijo, 
+    --P5=Suplencia, P3=Funcionarios, P4=CAS, P6=P.Profesional, PB=Residente, PA=SERUM
     sexo INT(1) NOT NULL COMMENT '1=Masculino, 2=Femenino',
     fch_nac DATE NOT NULL,
     est_civ INT(1) NOT NULL COMMENT '0=soltero, 1=Casado, 2=Viudo, 3=Divorciado, 6=Concubino, 7=Conviviente',
