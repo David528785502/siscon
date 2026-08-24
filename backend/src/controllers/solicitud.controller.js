@@ -19,7 +19,7 @@ const convertirFecha = (fechaStr) => {
  * Guarda múltiples solicitudes en la base de datos
  */
 export const guardarSolicitudes = async (req, res) => {
-  const { solicitudes, codigoEntidad, fechaSolicitud } = req.body;
+  const { solicitudes, codigoEntidad, nombreEntidad, fechaSolicitud } = req.body;
 
   if (!solicitudes || !Array.isArray(solicitudes) || solicitudes.length === 0) {
     return res.status(400).json({
@@ -81,15 +81,16 @@ export const guardarSolicitudes = async (req, res) => {
         // Insertar solicitud
         const [result] = await connection.query(
           `INSERT INTO solicitud 
-           (codigo, paterno, materno, nombres, monto_solicitado, plazo, cuota, tipo, 
+           (codigo, paterno, materno, nombres, nombre_entidad, monto_solicitado, plazo, cuota, tipo, 
             fecha_solicitud, estado, observacion, liquidez_al_solicitar, 
             capacidad_al_solicitar, tipo_contrato)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
             solicitud.codigo,
             paterno,
             materno,
             nombres,
+            nombreEntidad,
             solicitud.monto,
             solicitud.plazo,
             solicitud.cuota,
@@ -156,18 +157,29 @@ export const obtenerSolicitudes = async (req, res) => {
         id,
         codigo,
         CONCAT(paterno, ' ', materno, ' ', nombres) as nombreCompleto,
+        nombre_entidad as entidad,
         monto_solicitado as monto,
         plazo,
         cuota,
         tipo,
-        fecha_solicitud as fechaSolicitud,
+        fecha_solicitud as fecha,
         estado,
         observacion,
         liquidez_al_solicitar as liquidez,
         capacidad_al_solicitar as capacidad,
         tipo_contrato as tipoContrato
       FROM solicitud
-      ORDER BY id DESC`
+      ORDER BY 
+        CASE estado
+          WHEN 'A' THEN 1
+          WHEN 'P' THEN 2
+          WHEN 'R' THEN 3
+          WHEN '-' THEN 4
+          ELSE 5
+        END,
+        paterno ASC,
+        materno ASC,
+        nombres ASC`
     );
 
     res.json({

@@ -23,4 +23,16 @@ export class EmolumentosService {
 
     return this.http.get(`${this.apiUrl}/${codigo}`, { headers, params });
   }
+
+  getHistorial(codigo: string, grupPer: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.http.get(`${this.apiUrl}/${codigo}/historial`, { 
+      headers, 
+      params: { grup_per: grupPer } 
+    });
+  }
 }

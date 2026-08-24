@@ -18,13 +18,14 @@ export class PersonalService {
     });
   }
 
-  getPersonal(nombre?: string, dni?: string, periodo?: string, pagina: number = 1, itemsPorPagina: number = 10): Observable<any> {
+  getPersonal(nombre?: string, dni?: string, codigo?: string, periodo?: string, pagina: number = 1, itemsPorPagina: number = 10): Observable<any> {
     let params: any = {
       pagina: pagina.toString(),
       limite: itemsPorPagina.toString()
     };
     if (nombre) params.nombre = nombre;
     if (dni) params.dni = dni;
+    if (codigo) params.codigo = codigo;
     // Periodo siempre debe estar presente
     if (periodo) params.periodo = periodo;
     

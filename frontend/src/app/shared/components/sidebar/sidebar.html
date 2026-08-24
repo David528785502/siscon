@@ -1,26 +1,32 @@
-<aside class="w-64 bg-white shadow-lg">
-  <div class="p-4 border-b">
-    <h2 class="text-lg font-bold text-gray-800">SISCON</h2>
-    <p class="text-xs text-gray-500">Sistema de Préstamos</p>
+<aside [class.w-64]="!isCollapsed" [class.w-16]="isCollapsed" class="bg-white shadow-lg transition-all duration-300 flex flex-col h-full relative z-20">
+  <div class="p-4 border-b flex justify-between items-center whitespace-nowrap overflow-hidden min-h-[73px]">
+    <div *ngIf="!isCollapsed" class="fade-in">
+      <h2 class="text-lg font-bold text-gray-800">SISCON</h2>
+      <p class="text-xs text-gray-500">Sistema de Préstamos</p>
+    </div>
+    <button (click)="toggleSidebar()" class="text-gray-500 hover:text-gray-800 focus:outline-none ml-auto" [class.mx-auto]="isCollapsed">
+      <span class="material-symbols-outlined">{{ isCollapsed ? 'menu' : 'menu_open' }}</span>
+    </button>
   </div>
 
-  <nav class="p-2 overflow-y-auto" style="height: calc(100vh - 80px);">
+  <nav class="p-2 overflow-y-auto flex-1">
     <div *ngFor="let item of menuItems" class="mb-1">
       <!-- Menú principal -->
       <div 
         class="flex items-center justify-between p-2 rounded hover:bg-gray-100 cursor-pointer"
-        (click)="toggleMenu(item)">
-        <div class="flex items-center">
-          <span class="material-symbols-outlined text-gray-600 mr-2 text-xl">{{ item.icon }}</span>
-          <span class="text-sm font-medium text-gray-700">{{ item.label }}</span>
+        (click)="isCollapsed ? toggleSidebar() : toggleMenu(item)"
+        [title]="isCollapsed ? item.label : ''">
+        <div class="flex items-center w-full" [class.justify-center]="isCollapsed">
+          <span class="material-symbols-outlined text-gray-600 text-xl" [class.mr-2]="!isCollapsed">{{ item.icon }}</span>
+          <span *ngIf="!isCollapsed" class="text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden overflow-ellipsis">{{ item.label }}</span>
         </div>
-        <span *ngIf="item.children" class="material-symbols-outlined text-gray-400 text-lg">
+        <span *ngIf="!isCollapsed && item.children" class="material-symbols-outlined text-gray-400 text-lg flex-shrink-0">
           {{ item.expanded ? 'expand_less' : 'expand_more' }}
         </span>
       </div>
 
       <!-- Submenú nivel 1 -->
-      <div *ngIf="item.children && item.expanded" class="ml-4 mt-1">
+      <div *ngIf="!isCollapsed && item.children && item.expanded" class="ml-4 mt-1 fade-in">
         <div *ngFor="let child of item.children">
           <a 
             *ngIf="child.route"

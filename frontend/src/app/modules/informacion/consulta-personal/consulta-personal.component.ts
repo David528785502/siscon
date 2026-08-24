@@ -15,8 +15,13 @@ export class ConsultaPersonalComponent implements OnInit {
   showModal: boolean = false;
   loadingModal: boolean = false;
   selectedPersona: any = null;
+  selectedPersonaDetalle: any = null;
+  cuentaHaberes: any = null;
+  cuentaCts: any = null;
+  fotoFallida: boolean = false;
   periodo: string = '';
-  tabActivo: string = 'emolumentos'; // 'emolumentos' o 'capacidad'
+  boletaTipoActual: string = '';
+  tabActivo: string = 'datos'; // 'datos' o 'remuneracion'
   emolumentos: any = {
     ingresos: [],
     descuentos: [],
@@ -24,6 +29,9 @@ export class ConsultaPersonalComponent implements OnInit {
     totalDescuentos: 0,
     totalNeto: 0
   };
+  
+  historialBoletas: any[] = [];
+  cargandoHistorial: boolean = false;
 
   // Clasificación de conceptos para capacidad de endeudamiento
   conceptos = {
@@ -266,17 +274,16 @@ export class ConsultaPersonalComponent implements OnInit {
   hayMasPaginas: boolean = false;
   totalPaginas: number = 0;
   
-  meses: string[] = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-  mesesCompletos: string[] = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-  mostrarPeriodoSelector: boolean = false;
-  anioTemporal: string = ''; // Año temporal para navegación en el selector
-  
   filtros = {
     nombre: '',
     dni: '',
-    mes: '',
-    anio: ''
+    codigo: ''
   };
+
+  // SAP Style Search
+  tipoBusqueda: string = '1'; // '1'=nombres, '2'=codigo, '3'=dni
+  terminoBusqueda: string = '';
+  personaSeleccionadaIndex: number = -1;
 
   tiposContrato: { [key: string]: string } = {
     'P8': 'Nombrado',
@@ -288,7 +295,24 @@ export class ConsultaPersonalComponent implements OnInit {
     'P4': 'CAS',
     'P6': 'P.Profesional',
     'PB': 'Residente',
-    'PA': 'SERUM'
+    'PA': 'SERUM',
+    
+    '2': '728',
+    '3': '728',
+    '4': 'CAS',
+    '5': 'CAS',
+    '6': '276',
+    '7': '276',
+    '8': 'PRACTICANTE',
+    '9': '276',
+    'E': 'CAS COVID',
+    'F': 'CAS EMERG.'
+  };
+
+  tiposDocumento: any = {
+    '01': 'DNI',
+    '04': 'CARNÉ EXT.',
+    '07': 'PASAPORTE',
   };
 
   constructor(
@@ -298,89 +322,20 @@ export class ConsultaPersonalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.calcularPeriodoAnterior();
     this.loadPersonal();
-  }
-
-  calcularPeriodoAnterior(): void {
-    const hoy = new Date();
-    let mes = hoy.getMonth(); // 0-11 (Enero es 0)
-    let anio = hoy.getFullYear();
-    
-    // Mes anterior
-    if (mes === 0) {
-      // Si es enero, ir a diciembre del año anterior
-      mes = 12;
-      anio = anio - 1;
-    }
-    
-    this.filtros.mes = this.formatMes(mes);
-    this.filtros.anio = anio.toString();
-  }
-
-  formatMes(mes: number): string {
-    return mes.toString().padStart(2, '0');
-  }
-
-  seleccionarMes(mes: number): void {
-    this.filtros.mes = this.formatMes(mes);
-    this.filtros.anio = this.anioTemporal; // Guardar el año temporal seleccionado
-    this.mostrarPeriodoSelector = false;
-    this.aplicarFiltros();
-  }
-
-  togglePeriodoSelector(): void {
-    this.mostrarPeriodoSelector = !this.mostrarPeriodoSelector;
-    // Inicializar año temporal con el año actual de filtros
-    if (this.mostrarPeriodoSelector) {
-      this.anioTemporal = this.filtros.anio;
-    }
-  }
-
-  getNombreMes(mes: string): string {
-    if (!mes) return 'Seleccione';
-    const mesNum = parseInt(mes) - 1;
-    return this.mesesCompletos[mesNum] || 'Seleccione';
-  }
-
-  cambiarAnio(incremento: number): void {
-    const anioActual = parseInt(this.anioTemporal);
-    this.anioTemporal = (anioActual + incremento).toString();
-    // No aplicar filtros hasta que se seleccione un mes
-  }
-
-  cerrarPeriodoSelector(): void {
-    this.mostrarPeriodoSelector = false;
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    // Cerrar el selector si el clic fue fuera del elemento
-    if (this.mostrarPeriodoSelector) {
-      const target = event.target as HTMLElement;
-      const clickedInside = this.elementRef.nativeElement.querySelector('.periodo-selector-container')?.contains(target);
-      if (!clickedInside) {
-        this.mostrarPeriodoSelector = false;
-      }
-    }
   }
 
   loadPersonal(): void {
     this.loading = true;
     this.errorMessage = '';
 
-    // SIEMPRE construir periodo en formato MM-YYYY
-    // Si no hay mes/año en filtros, usar el calculado por defecto
-    if (!this.filtros.mes || !this.filtros.anio) {
-      this.calcularPeriodoAnterior();
-    }
-    
-    const periodo = `${this.filtros.mes}-${this.filtros.anio}`;
-    console.log('Frontend - Periodo enviado:', periodo, 'Filtros:', this.filtros);
+    const periodo = ''; // Ya no se usa periodo para busqueda de personal
+    console.log('Frontend - Filtros:', this.filtros);
 
     this.personalService.getPersonal(
       this.filtros.nombre, 
       this.filtros.dni, 
+      this.filtros.codigo,
       periodo,
       this.paginaActual,
       this.itemsPorPagina
@@ -392,16 +347,6 @@ export class ConsultaPersonalComponent implements OnInit {
           this.hayMasPaginas = response.hayMasPaginas || false;
           this.totalPaginas = response.totalPaginas || 0;
           console.log('Registros cargados:', this.personal.length, 'Página:', this.paginaActual, 'de', this.totalPaginas);
-          
-          // Limpiar valores calculados anteriores
-          this.personal.forEach(p => {
-            p.ingreso_calculado = undefined;
-            p.capacidad_calculada = undefined;
-            p.liquidez_calculada = undefined;
-          });
-          
-          // Cargar emolumentos para cada persona visible y calcular valores
-          this.cargarEmolumentosTabla(periodo);
         }
       },
       error: (error) => {
@@ -413,18 +358,57 @@ export class ConsultaPersonalComponent implements OnInit {
   }
 
   aplicarFiltros(): void {
-    this.paginaActual = 1; // Resetear a página 1 al aplicar filtros
-    this.mostrarPeriodoSelector = false;
+    // Mapear término de búsqueda a los filtros reales
+    this.filtros.nombre = '';
+    this.filtros.dni = '';
+    this.filtros.codigo = '';
+    
+    if (this.terminoBusqueda) {
+      if (this.tipoBusqueda === '1') {
+        this.filtros.nombre = this.terminoBusqueda;
+      } else if (this.tipoBusqueda === '3') {
+        this.filtros.dni = this.terminoBusqueda;
+      } else if (this.tipoBusqueda === '2') {
+        this.filtros.codigo = this.terminoBusqueda;
+      }
+    }
+
+    this.paginaActual = 1;
+    this.personaSeleccionadaIndex = -1; // Reset selection
+    this.selectedPersona = null;
     this.loadPersonal();
   }
 
   limpiarFiltros(): void {
+    this.terminoBusqueda = '';
     this.filtros.nombre = '';
     this.filtros.dni = '';
-    this.calcularPeriodoAnterior();
+    this.filtros.codigo = '';
     this.paginaActual = 1;
-    this.mostrarPeriodoSelector = false;
+    this.personaSeleccionadaIndex = -1;
+    this.selectedPersona = null;
     this.loadPersonal();
+  }
+
+  seleccionarEnGrilla(persona: any, index: number): void {
+    this.selectedPersona = persona;
+    this.personaSeleccionadaIndex = index;
+    this.fotoFallida = false; // Reiniciar estado de foto
+    this.historialBoletas = [];
+    this.cargandoHistorial = true;
+
+    this.emolumentosService.getHistorial(persona.codigo, persona.grup_per).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.historialBoletas = res.data;
+        }
+        this.cargandoHistorial = false;
+      },
+      error: (err) => {
+        console.error('Error cargando historial', err);
+        this.cargandoHistorial = false;
+      }
+    });
   }
 
   // Métodos de paginación
@@ -455,13 +439,40 @@ export class ConsultaPersonalComponent implements OnInit {
     this.loadPersonal();
   }
 
-  getEstado(status: number): string {
-    return status === 1 ? 'Activo' : 'Inactivo';
+  getEstado(status: any): string {
+    return status == 3 ? 'Activo' : 'Inactivo';
   }
 
   formatDate(date: string): string {
     if (!date) return '';
-    return new Date(date).toLocaleDateString('es-PE');
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return '';
+    const day = d.getDate().toString().padStart(2, '0');
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
+  getFotoUrl(codigo: string | undefined): string {
+    if (!codigo || codigo.length < 2) return 'assets/no-photo.png';
+    const numStr = codigo.substring(1);
+    return `http://10.0.1.98/fotos/fotos/${numStr}.jpg`;
+  }
+
+  onFotoError(event: any): void {
+    this.fotoFallida = true;
+  }
+
+  getRegimenPensiones(afp: string | null | undefined): string {
+    if (!afp) return '';
+    if (afp === 'SNP' || afp === 'ONP') return afp;
+    return 'AFP';
+  }
+
+  getAfpName(afp: string | null | undefined): string {
+    if (!afp) return '';
+    if (afp === 'SNP' || afp === 'ONP') return '';
+    return afp;
   }
 
   formatMoney(amount: number): string {
@@ -483,98 +494,19 @@ export class ConsultaPersonalComponent implements OnInit {
     return Number(ingresoNeto) * 0.40;
   }
 
-  cargarEmolumentosTabla(periodo: string): void {
-    // Cargar emolumentos para cada persona visible en la tabla
-    this.personal.forEach(persona => {
-      this.emolumentosService.getEmolumentosByCodigo(persona.codigo, periodo, persona.grup_per).subscribe({
-        next: (response) => {
-          if (response.success) {
-            const valores = this.calcularValoresPersona(response.data);
-            persona.ingreso_calculado = valores.ingreso;
-            persona.capacidad_calculada = valores.capacidad;
-            persona.liquidez_calculada = valores.liquidez;
-          }
-        },
-        error: (error) => {
-          console.error(`Error al cargar emolumentos para ${persona.codigo}:`, error);
-          persona.ingreso_calculado = 0;
-          persona.capacidad_calculada = 0;
-          persona.liquidez_calculada = 0;
-        }
-      });
-    });
-  }
-
-  calcularValoresPersona(emolumentos: any): { ingreso: number, capacidad: number, liquidez: number } {
-    // Clasificar ingresos permanentes (al 100%)
-    const ingresosPermanentes100 = emolumentos.ingresos
-      .filter((ing: any) => this.conceptos.ingresosPermanentes.includes(ing.concepto))
-      .reduce((sum: number, ing: any) => sum + parseFloat(ing.importe || 0), 0);
-    
-    // Clasificar ingresos otros (al 50%)
-    const ingresosOtros50 = emolumentos.ingresos
-      .filter((ing: any) => this.conceptos.ingresosOtros.includes(ing.concepto))
-      .reduce((sum: number, ing: any) => sum + (parseFloat(ing.importe || 0) * 0.5), 0);
-    
-    const ingresosPermanentes = ingresosPermanentes100 + ingresosOtros50;
-
-    // Clasificar descuentos
-    const descuentosLey = emolumentos.descuentos
-      .filter((desc: any) => this.conceptos.descuentosLey.includes(desc.concepto))
-      .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
-
-    const descuentosJudiciales = emolumentos.descuentos
-      .filter((desc: any) => this.conceptos.descuentosJudiciales.includes(desc.concepto))
-      .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
-
-    const descuentosInstitucionales = emolumentos.descuentos
-      .filter((desc: any) => this.conceptos.descuentosInstitucionales.includes(desc.concepto))
-      .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
-
-    const descuentosSindicales = emolumentos.descuentos
-      .filter((desc: any) => this.conceptos.descuentosSindicales.includes(desc.concepto))
-      .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
-
-    const descuentosTerceros = emolumentos.descuentos
-      .filter((desc: any) => this.conceptos.descuentosTerceros.includes(desc.concepto))
-      .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
-
-    // Cálculo de Ingreso
-    const ingreso = ingresosPermanentes 
-      - descuentosLey 
-      - descuentosJudiciales 
-      - descuentosInstitucionales 
-      - descuentosSindicales;
-
-    // Algoritmo de Capacidad de Endeudamiento
-    const capacidad40 = ingreso * 0.40;
-    const capacidadEndeudamiento50 = (ingresosPermanentes - descuentosLey) * 0.50;
-    const variableTemporal = capacidad40 + descuentosJudiciales + descuentosSindicales;
-
-    let capacidad = 0;
-    if (variableTemporal > capacidadEndeudamiento50) {
-      capacidad = capacidadEndeudamiento50 - descuentosJudiciales - descuentosSindicales;
-    } else {
-      capacidad = capacidad40;
-    }
-
-    // Cálculo de Liquidez
-    let liquidez = capacidad - descuentosTerceros;
-    if (liquidez < 0) {
-      liquidez = 0;
-    }
-
-    return { ingreso, capacidad, liquidez };
-  }
+  // Ya no se necesita cargarEmolumentosTabla ni calcularValoresPersona para la grilla padre
 
   calcularCapacidadEndeudamiento(): void {
+    const ingresosSeguros = this.emolumentos?.ingresos || [];
+    const descuentosSeguros = this.emolumentos?.descuentos || [];
+
     // Clasificar ingresos permanentes (al 100%)
-    const ingresosPermanentes100 = this.emolumentos.ingresos
+    const ingresosPermanentes100 = ingresosSeguros
       .filter((ing: any) => this.conceptos.ingresosPermanentes.includes(ing.concepto))
       .reduce((sum: number, ing: any) => sum + parseFloat(ing.importe || 0), 0);
     
     // Clasificar ingresos otros (al 50%)
-    const ingresosOtros50 = this.emolumentos.ingresos
+    const ingresosOtros50 = ingresosSeguros
       .filter((ing: any) => this.conceptos.ingresosOtros.includes(ing.concepto))
       .reduce((sum: number, ing: any) => sum + (parseFloat(ing.importe || 0) * 0.5), 0);
     
@@ -583,23 +515,23 @@ export class ConsultaPersonalComponent implements OnInit {
     this.capacidad.ingresosOtros = ingresosOtros50;
 
     // Clasificar descuentos
-    this.capacidad.descuentosLey = this.emolumentos.descuentos
+    this.capacidad.descuentosLey = descuentosSeguros
       .filter((desc: any) => this.conceptos.descuentosLey.includes(desc.concepto))
       .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
 
-    this.capacidad.descuentosJudiciales = this.emolumentos.descuentos
+    this.capacidad.descuentosJudiciales = descuentosSeguros
       .filter((desc: any) => this.conceptos.descuentosJudiciales.includes(desc.concepto))
       .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
 
-    this.capacidad.descuentosInstitucionales = this.emolumentos.descuentos
+    this.capacidad.descuentosInstitucionales = descuentosSeguros
       .filter((desc: any) => this.conceptos.descuentosInstitucionales.includes(desc.concepto))
       .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
 
-    this.capacidad.descuentosSindicales = this.emolumentos.descuentos
+    this.capacidad.descuentosSindicales = descuentosSeguros
       .filter((desc: any) => this.conceptos.descuentosSindicales.includes(desc.concepto))
       .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
 
-    this.capacidad.descuentosTerceros = this.emolumentos.descuentos
+    this.capacidad.descuentosTerceros = descuentosSeguros
       .filter((desc: any) => this.conceptos.descuentosTerceros.includes(desc.concepto))
       .reduce((sum: number, desc: any) => sum + parseFloat(desc.importe || 0), 0);
 
@@ -643,18 +575,32 @@ export class ConsultaPersonalComponent implements OnInit {
     }
   }
 
-  verDetalle(persona: any): void {
-    this.selectedPersona = persona;
-    this.showModal = true;
-    this.loadingModal = true;
+  verJudiciales(boleta: any): void {
+    console.log('Ver Judiciales para boleta:', boleta);
+    alert('Funcionalidad de Judiciales en construcción');
+  }
 
-    const periodo = `${this.filtros.mes}-${this.filtros.anio}`;
+  verDetalle(persona: any, boletaPeriodo?: string, boletaTipo?: string): void {
+    this.selectedPersona = persona;
+    this.boletaTipoActual = boletaTipo || '';
+    this.periodo = boletaPeriodo || '';
+    this.showModal = true;
+    this.fotoFallida = false; // Reiniciar estado de foto
+
+    this.loadingModal = true;
+    this.tabActivo = 'datos';
+
+    const periodo = boletaPeriodo || '';
+    
     this.emolumentosService.getEmolumentosByCodigo(persona.codigo, periodo, persona.grup_per).subscribe({
       next: (response) => {
         this.loadingModal = false;
         if (response.success) {
           this.emolumentos = response.data;
-          this.periodo = response.periodo;
+          this.periodo = response.periodo || boletaPeriodo || '';
+          this.selectedPersonaDetalle = response.data.personalDetalle || null;
+          this.cuentaHaberes = response.data.cuentaHaberes || null;
+          this.cuentaCts = response.data.cuentaCts || null;
           this.calcularCapacidadEndeudamiento();
         }
       },
@@ -667,8 +613,12 @@ export class ConsultaPersonalComponent implements OnInit {
 
   cerrarModal(): void {
     this.showModal = false;
-    this.selectedPersona = null;
-    this.tabActivo = 'emolumentos';
+    this.periodo = '';
+    this.selectedPersonaDetalle = null;
+    this.cuentaHaberes = null;
+    this.cuentaCts = null;
+    this.tabActivo = 'datos';
+    this.boletaTipoActual = '';
     this.emolumentos = {
       ingresos: [],
       descuentos: [],

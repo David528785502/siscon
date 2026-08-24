@@ -53,6 +53,10 @@ export class SolicitudesPrestamosComponent {
       next: (response) => {
         if (response.success) {
           this.solicitudes = response.data;
+          console.log('Solicitudes ordenadas:', this.solicitudes.map(s => ({ 
+            estado: s.estado, 
+            nombre: s.nombreCompleto 
+          })));
         }
         this.loading = false;
       },
@@ -64,7 +68,11 @@ export class SolicitudesPrestamosComponent {
   }
 
   isMantenimiento(): boolean {
-    return this.router.url.includes('mantenimiento');
+    const esMantenimiento = this.router.url.includes('mantenimiento');
+    console.log('URL actual:', this.router.url);
+    console.log('Es mantenimiento:', esMantenimiento);
+    console.log('Solicitudes cargadas:', this.solicitudes.length);
+    return esMantenimiento;
   }
 
   abrirSelectorArchivo(): void {
@@ -277,6 +285,7 @@ export class SolicitudesPrestamosComponent {
     this.solicitudService.guardarSolicitudes(
       this.solicitudesImportadas,
       this.codigoEntidad,
+      this.nombreEntidad,
       this.fechaSolicitud
     ).subscribe({
       next: (response) => {

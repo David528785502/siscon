@@ -15,6 +15,12 @@ interface MenuItem {
   styleUrl: './sidebar.scss',
 })
 export class SidebarComponent {
+  isCollapsed = false;
+
+  toggleSidebar(): void {
+    this.isCollapsed = !this.isCollapsed;
+  }
+
   menuItems: MenuItem[] = [
     {
       label: 'Información',

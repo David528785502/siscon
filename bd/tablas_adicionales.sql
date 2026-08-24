@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS solicitud (
     paterno VARCHAR(50) NOT NULL,
     materno VARCHAR(50) NOT NULL,
     nombres VARCHAR(100) NOT NULL,
+    nombre_entidad VARCHAR(100) NOT NULL,
     monto_solicitado DECIMAL(12,2) NOT NULL,
     plazo INT(3) NOT NULL,
     cuota DECIMAL(12,2) NOT NULL,

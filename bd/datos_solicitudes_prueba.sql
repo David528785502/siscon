@@ -1,6 +1,5 @@
 --NO EJECUTAR EN PRODUCCION
 
-
 -- ============================================
 -- DATOS DE PRUEBA - SISTEMA DE PRÉSTAMOS
 -- ============================================
@@ -39,9 +38,6 @@ INSERT INTO sc_personal (codigo, posicion, nombres, paterno, materno, nombre, ar
 ('2295498', 'POS010', 'JORGE JESUS MATEO RAMIREZ', 'MATEO', 'RAMIREZ', 'JORGE JESUS', '01', '0001', 1, '01', '22954980', '2016-04-08', 'GP010', '2025-12', 1),
 ('1224708', 'POS011', 'OLGA ALICIA AQUINO HUAMAN DE CORDOVA', 'AQUINO', 'HUAMAN DE CORDOVA', 'OLGA ALICIA', '02', '0002', 1, '01', '12247080', '2017-02-14', 'GP011', '2025-12', 1);
 '1', '14573424', '3', 'P2', '20000543', 'RP Sab Pol Metrop Of Adm', '0208', '', '40000204', 'PROFESIONAL', '01', '10223927', '2004-12-20', 'PQ.R.PRIALE 276 LA', '4', 'P1', '1', '1961-04-15', '0', 'PROFUTUR', '523841AACDE7', '1', 'P2', '0200', '0000-00-00', '0.00', '01-2020', '0', '', '', '0000-00-00 00:00:00', '', '0000-00-00 00:00:00', 'P2'
-
-
-
 
 -- ============================================
 -- EMOLUMENTOS - sc_emol_p3 (Trabajadores CAS: 4086702, 4028171, 4785102)

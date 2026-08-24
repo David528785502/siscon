@@ -4,7 +4,7 @@ import { limpiarTexto } from '../utils/textHelper.js';
 export const getPersonal = async (req, res) => {
   try {
     // Obtener parámetros de filtro
-    const { nombre, dni, periodo: periodoParam, pagina = 1, limite = 10 } = req.query;
+    const { nombre, dni, codigo, periodo: periodoParam, pagina = 1, limite = 10 } = req.query;
     
     // Calcular mes anterior como periodo por defecto
     const hoy = new Date();
@@ -31,23 +31,28 @@ export const getPersonal = async (req, res) => {
     let queryParams = [];
     
     if (nombre) {
-      whereConditions.push('nombres LIKE ?');
+      whereConditions.push('p.nombres LIKE ?');
       queryParams.push(`%${nombre}%`);
     }
     
     if (dni) {
-      whereConditions.push('documento LIKE ?');
+      whereConditions.push('p.documento LIKE ?');
       queryParams.push(`%${dni}%`);
+    }
+
+    if (codigo) {
+      whereConditions.push('p.codigo LIKE ?');
+      queryParams.push(`%${codigo}%`);
     }
     
     const whereClause = whereConditions.length > 0 ? 'WHERE ' + whereConditions.join(' AND ') : '';
     
     console.log('Backend - WHERE:', whereClause, 'Params:', queryParams);
 
-    // Query de conteo: tabla optimizada
+    // Query de conteo: conteo rápido desde la tabla de lista
     const countQuery = `
-      SELECT COUNT(*) as total
-      FROM sc_personal_lista
+      SELECT COUNT(*) as total 
+      FROM sc_personal p
       ${whereClause}
     `;
 
@@ -56,26 +61,49 @@ export const getPersonal = async (req, res) => {
 
     console.log('Backend - Total registros:', total, 'Total páginas:', totalPaginas);
 
-    // Query principal: tabla optimizada (sin GROUP BY)
+    if (total === 0) {
+      return res.json({ success: true, data: [], totalPaginas: 0 });
+    }
+
+    // "Deferred Join": Obtener primero los 10 codigos rápidos
+    const fastCodigosQuery = `
+      SELECT p.id
+      FROM sc_personal p
+      ${whereClause}
+      ORDER BY p.nombres
+      LIMIT ? OFFSET ?
+    `;
+    const [fastRows] = await pool.query(fastCodigosQuery, [...queryParams, limiteNum, offset]);
+    
+    const idsList = fastRows.map(r => r.id);
+    
+    if (idsList.length === 0) {
+      return res.json({ success: true, data: [], totalPaginas });
+    }
+
+    // Query principal: agrupando historial SOLO para los 10 registros extraidos
     const dataQuery = `
       SELECT 
-        codigo,
-        documento,
-        nombres AS nombre_completo,
-        status,
-        fch_ing,
-        grup_per
-      FROM sc_personal_lista
-      ${whereClause}
-      ORDER BY nombres
-      LIMIT ? OFFSET ?
+        p.codigo,
+        p.posicion,
+        p.documento,
+        p.nombres AS nombre_completo,
+        MAX(p.status) as status,
+        MAX(p.fch_ing) as fch_ing,
+        MAX(p.id_doc) as id_doc,
+        CASE WHEN pd.grup_per IN ('E', 'F') THEN '4' ELSE pd.grup_per END as grup_per
+      FROM sc_personal p
+      LEFT JOIN sc_personal_detalle pd ON p.codigo = pd.codigo AND DATE(p.fch_ing) = DATE(pd.fch_ing)
+      WHERE p.id IN (?)
+      GROUP BY p.codigo, p.posicion, p.documento, p.nombres, CASE WHEN pd.grup_per IN ('E', 'F') THEN '4' ELSE pd.grup_per END
+      ORDER BY p.nombres, MAX(p.status) DESC
     `;
 
     // Ejecutar query
-    const [datos] = await pool.query(dataQuery, [...queryParams, limiteNum, offset]);
+    const [dataRows] = await pool.query(dataQuery, [idsList]);
     
     // Limpiar textos antes de enviar
-    const datosLimpios = datos.map(row => ({
+    const datosLimpios = dataRows.map(row => ({
       ...row,
       nombre_completo: limpiarTexto(row.nombre_completo)
     }));
@@ -83,7 +111,7 @@ export const getPersonal = async (req, res) => {
     // Verificar si hay más páginas
     const hayMasPaginas = paginaNum < totalPaginas;
     
-    console.log('Registros en página:', datos.length, 'Hay más:', hayMasPaginas);
+    console.log('Registros en página:', datosLimpios.length, 'Hay más:', hayMasPaginas);
 
     res.json({
       success: true,

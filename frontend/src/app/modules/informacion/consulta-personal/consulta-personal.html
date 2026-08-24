@@ -1,369 +1,496 @@
-<div class="bg-white rounded-lg shadow">
-  <!-- Filtros -->
-  <div class="p-4 border-b bg-gray-50">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-        <input
-          type="text"
-          [(ngModel)]="filtros.nombre"
-          placeholder="Buscar por nombre"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">DNI</label>
-        <input
-          type="text"
-          [(ngModel)]="filtros.dni"
-          placeholder="Buscar por DNI"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
-      <div class="relative periodo-selector-container">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Periodo</label>
-        <!-- Botón para abrir/cerrar selector -->
-        <button
-          (click)="togglePeriodoSelector()"
-          class="w-full px-3 py-2 border border-gray-300 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-between"
-        >
-          <span class="text-gray-900">{{ getNombreMes(filtros.mes) }} {{ filtros.anio }}</span>
-          <span class="text-gray-500">{{ mostrarPeriodoSelector ? '▲' : '▼' }}</span>
-        </button>
+<div class="bg-gray-50 min-h-screen pb-10 pt-6">
+  <div class="px-6 max-w-7xl mx-auto">
+
+    <!-- Controles de Búsqueda -->
+    <div class="mb-4">
+      
+      <!-- Fila Superior: Radio Buttons y Selector de Periodo -->
+      <div class="flex justify-between items-center max-w-4xl mb-3">
         
-        <!-- Selector desplegable -->
-        <div
-          *ngIf="mostrarPeriodoSelector"
-          class="absolute z-10 mt-1 w-full border border-gray-300 rounded-md p-3 bg-white shadow-lg"
-        >
-          <!-- Selector de Año -->
-          <div class="flex items-center justify-center gap-2 mb-3">
-            <button
-              (click)="cambiarAnio(-1)"
-              class="px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-            >
-              ◀
-            </button>
-            <span class="text-lg font-semibold text-gray-800 min-w-[60px] text-center">{{ anioTemporal }}</span>
-            <button
-              (click)="cambiarAnio(1)"
-              class="px-2 py-1 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded"
-            >
-              ▶
-            </button>
-          </div>
-          <!-- Grid de Meses -->
-          <div class="grid grid-cols-3 gap-1">
-            <button
-              *ngFor="let mes of meses; let i = index"
-              (click)="seleccionarMes(i + 1)"
-              [class.bg-blue-600]="filtros.mes === formatMes(i + 1)"
-              [class.text-white]="filtros.mes === formatMes(i + 1)"
-              [class.bg-gray-100]="filtros.mes !== formatMes(i + 1)"
-              [class.text-gray-700]="filtros.mes !== formatMes(i + 1)"
-              class="px-2 py-1.5 text-xs font-medium rounded hover:bg-blue-500 hover:text-white transition-colors"
-            >
-              {{ mes }}
-            </button>
-          </div>
+        <!-- Radio Buttons -->
+        <div class="flex space-x-6">
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" [(ngModel)]="tipoBusqueda" value="1" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700 font-medium">Apellidos y Nombres</span>
+          </label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" [(ngModel)]="tipoBusqueda" value="2" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700 font-medium">Codigo SAP</span>
+          </label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" [(ngModel)]="tipoBusqueda" value="3" class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
+            <span class="ml-2 text-sm text-gray-700 font-medium">DNI</span>
+          </label>
+        </div>
+
+      </div>
+
+      <!-- Buscador Input & Buttons -->
+      <div class="flex gap-2 max-w-4xl">
+        <div class="flex-grow flex shadow-sm rounded-md">
+          <span class="bg-gray-100 border border-gray-300 border-r-0 rounded-l-md px-4 py-2 flex items-center text-gray-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </span>
+          <input type="text" [(ngModel)]="terminoBusqueda" (keyup.enter)="aplicarFiltros()" 
+            [placeholder]="tipoBusqueda === '1' ? 'Buscar Apellidos y Nombres...' : (tipoBusqueda === '2' ? 'Buscar Codigo SAP...' : 'Buscar DNI...')" 
+            class="flex-grow border border-gray-300 rounded-r-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+        </div>
+        <button (click)="aplicarFiltros()" [disabled]="loading" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 flex items-center justify-center min-w-[100px] disabled:opacity-70">
+          <span *ngIf="!loading">Buscar</span>
+          <div *ngIf="loading" class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+        </button>
+        <button (click)="limpiarFiltros()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-md text-sm font-medium transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-1">
+          Limpiar
+        </button>
+      </div>
+    </div>
+
+    <!-- Errores -->
+    <div *ngIf="errorMessage" class="mb-4 p-3 text-sm bg-red-50 border border-red-200 text-red-800 rounded">
+      {{ errorMessage }}
+    </div>
+
+    <!-- Master Grid & Photo Container -->
+    <div class="flex flex-col lg:flex-row gap-4 mb-2">
+      
+      <!-- Grilla Padre -->
+      <div class="lg:w-4/5 w-full bg-white border border-gray-300 h-64 overflow-auto rounded shadow-sm">
+        <table class="w-full text-sm text-left whitespace-nowrap">
+          <thead class="text-xs text-gray-700 font-bold bg-blue-50 border-b border-gray-300 sticky top-0 z-10">
+            <tr>
+              <th class="px-4 py-2.5">CODIGO SAP</th>
+              <th class="px-4 py-2.5">POSICION</th>
+              <th class="px-4 py-2.5">APELLIDOS Y NOMBRES</th>
+              <th class="px-4 py-2.5">TIP. DOC.</th>
+              <th class="px-4 py-2.5">NRO. DOC.</th>
+              <th class="px-4 py-2.5">COND. ING.</th>
+              <th class="px-4 py-2.5">ESTADO</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let persona of personal; let i = index" 
+                (click)="seleccionarEnGrilla(persona, i)"
+                [class.bg-blue-100]="personaSeleccionadaIndex === i"
+                class="hover:bg-gray-50 cursor-pointer transition-colors">
+              <td class="px-4 py-2" [ngClass]="persona.status == 3 ? 'text-gray-900' : 'text-red-600'">{{ persona.codigo }}</td>
+              <td class="px-4 py-2" [ngClass]="persona.status == 3 ? 'text-gray-500' : 'text-red-600'">{{ persona.posicion }}</td>
+              <td class="px-4 py-2 font-medium" [ngClass]="persona.status == 3 ? 'text-gray-900' : 'text-red-600'">{{ persona.nombre_completo }}</td>
+              <td class="px-4 py-2" [ngClass]="persona.status == 3 ? 'text-gray-700' : 'text-red-600'">{{ tiposDocumento[persona.id_doc] || 'DNI' }}</td>
+              <td class="px-4 py-2" [ngClass]="persona.status == 3 ? 'text-gray-900' : 'text-red-600'">{{ persona.documento }}</td>
+              <td class="px-4 py-2" [ngClass]="persona.status == 3 ? 'text-gray-700' : 'text-red-600'">{{ tiposContrato[persona.grup_per] || persona.grup_per }}</td>
+              <td class="px-4 py-2 font-semibold" [ngClass]="persona.status == 3 ? 'text-gray-900' : 'text-red-600'">
+                {{ getEstado(persona.status) | uppercase }}
+              </td>
+            </tr>
+            <tr *ngIf="!loading && personal.length === 0">
+              <td colspan="7" class="px-4 py-8 text-center text-gray-500">No se encontraron registros.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Foto Empleado -->
+      <div class="lg:w-1/5 w-full flex flex-col shadow-sm">
+        <div class="h-8 bg-blue-100 border border-gray-300 border-b-0 rounded-t w-full flex items-center justify-center text-xs font-bold text-blue-800">FOTO</div>
+        <div class="border border-gray-300 rounded-b bg-white flex items-center justify-center h-[222px] overflow-hidden">
+          <ng-container *ngIf="selectedPersona && !fotoFallida; else noPhoto">
+            <img [src]="getFotoUrl(selectedPersona.codigo)" 
+                 (error)="onFotoError($event)"
+                 class="w-full h-full object-cover" 
+                 alt="Foto Empleado">
+          </ng-container>
+          <ng-template #noPhoto>
+            <svg class="w-32 h-32 text-blue-200" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+          </ng-template>
         </div>
       </div>
     </div>
-    <div class="mt-4 flex gap-2">
-      <button
-        (click)="aplicarFiltros()"
-        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        Buscar
-      </button>
-      <button
-        (click)="limpiarFiltros()"
-        class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
-      >
-        Limpiar
-      </button>
-    </div>
-  </div>
 
-  <div *ngIf="errorMessage" class="m-4 p-4 bg-red-50 text-red-800 rounded">
-    {{ errorMessage }}
-  </div>
-
-  <div *ngIf="loading" class="p-8 text-center">
-    <p class="text-gray-600">Cargando datos...</p>
-  </div>
-
-  <div *ngIf="!loading && personal.length > 0" class="overflow-x-auto">
-    <table class="w-full">
-      <thead class="bg-gray-50 border-b">
-        <tr>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">ID</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Código</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Nombre Completo</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">DNI</th>
-          <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Fecha Ingreso</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Ingreso</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Capacidad</th>
-          <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Liquidez</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-200">
-        <tr *ngFor="let persona of personal; let i = index" class="hover:bg-gray-50 cursor-pointer" (click)="verDetalle(persona)">
-          <td class="px-4 py-3 text-sm text-gray-900">{{ (paginaActual - 1) * itemsPorPagina + i + 1 }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900">{{ persona.codigo }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900">{{ persona.nombre_completo }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900">{{ persona.documento }}</td>
-          <td class="px-4 py-3 text-sm text-gray-600">{{ formatDate(persona.fch_ing) }}</td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">
-            {{ persona.ingreso_calculado !== undefined ? 'S/ ' + formatMoney(persona.ingreso_calculado) : '...' }}
-          </td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">
-            {{ persona.capacidad_calculada !== undefined ? 'S/ ' + formatMoney(persona.capacidad_calculada) : '...' }}
-          </td>
-          <td class="px-4 py-3 text-sm text-gray-900 text-right font-medium">
-            {{ persona.liquidez_calculada !== undefined ? 'S/ ' + formatMoney(persona.liquidez_calculada) : '...' }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <div *ngIf="!loading && personal.length === 0 && !errorMessage" class="p-8 text-center text-gray-500">
-    No hay datos de personal registrados
-  </div>
-
-  <!-- Paginación -->
-  <div *ngIf="!loading && personal.length > 0" class="p-4 border-t bg-gray-50">
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-      <!-- Items por página -->
+    <!-- Paginación Grilla Padre -->
+    <div *ngIf="personal.length > 0" [class.opacity-50]="loading" [class.pointer-events-none]="loading" class="mb-6 flex items-center justify-between bg-white p-2 border border-gray-200 rounded shadow-sm text-sm transition-opacity">
       <div class="flex items-center gap-2">
-        <span class="text-sm text-gray-600">Items por página:</span>
-        <select
-          [(ngModel)]="itemsPorPagina"
-          (change)="cambiarItemsPorPagina()"
-          class="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-          <option [value]="100">100</option>
-        </select>
+        <span class="text-gray-600 font-medium">10 registros por página</span>
       </div>
-
-      <!-- Rango de registros -->
-      <div class="text-sm text-gray-600">
-        {{ getRangoInicio() }} - {{ getRangoFin() }}
-      </div>
-
-      <!-- Navegación de páginas -->
-      <div class="flex items-center gap-2">
-        <button
-          (click)="irAPaginaAnterior()"
-          [disabled]="paginaActual === 1"
-          [class.opacity-50]="paginaActual === 1"
-          [class.cursor-not-allowed]="paginaActual === 1"
-          class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:hover:bg-white"
-        >
-          Anterior
-        </button>
-        
-        <span class="text-sm text-gray-600">
-          Página {{ paginaActual }} de {{ totalPaginas }}
-        </span>
-        
-        <button
-          (click)="irAPaginaSiguiente()"
-          [disabled]="!hayMasPaginas"
-          [class.opacity-50]="!hayMasPaginas"
-          [class.cursor-not-allowed]="!hayMasPaginas"
-          class="px-3 py-1 border border-gray-300 rounded text-sm hover:bg-gray-100 disabled:hover:bg-white"
-        >
-          Siguiente
-        </button>
+      <div class="flex items-center gap-4">
+        <span class="text-gray-600">{{ getRangoInicio() }} - {{ getRangoFin() }} de {{ totalPaginas * itemsPorPagina }} aprox.</span>
+        <div class="flex gap-1">
+          <button (click)="irAPaginaAnterior()" [disabled]="paginaActual === 1" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors">◀ Ant</button>
+          <span class="px-3 py-1 bg-gray-100 border border-gray-200 rounded font-medium text-gray-700">Pág {{ paginaActual }}</span>
+          <button (click)="irAPaginaSiguiente()" [disabled]="!hayMasPaginas" class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50 transition-colors">Sig ▶</button>
+        </div>
       </div>
     </div>
+
+    <!-- Child Grid (Grilla Hijo) -->
+    <div class="bg-white border border-gray-300 h-64 overflow-auto rounded shadow-sm">
+      <table class="w-full text-sm text-left whitespace-nowrap">
+        <thead class="text-xs text-gray-700 font-bold bg-blue-50 border-b border-gray-300 sticky top-0 z-10">
+          <tr>
+            <th class="px-4 py-2.5">PERIODO</th>
+            <th class="px-4 py-2.5">TIPO PAGO</th>
+            <th class="px-4 py-2.5">SOCIEDAD</th>
+            <th class="px-4 py-2.5">DEPENDENCIA</th>
+            <th class="px-4 py-2.5">NIVEL</th>
+            <th class="px-4 py-2.5">CARGO</th>
+            <th class="px-4 py-2.5 text-right">MONTO</th>
+            <th class="px-4 py-2.5 text-center">ACCION</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+          <tr *ngIf="cargandoHistorial">
+            <td colspan="8" class="px-4 py-10 text-center text-gray-500">
+              <div class="inline-block animate-spin rounded-full h-5 w-5 border-b-2 border-gray-400 mr-2 align-middle"></div>
+              <span class="align-middle">Cargando historial de pagos...</span>
+            </td>
+          </tr>
+          
+          <ng-container *ngIf="!cargandoHistorial && selectedPersona && historialBoletas.length > 0">
+            <tr *ngFor="let boleta of historialBoletas" class="hover:bg-gray-50 transition-colors">
+              <td class="px-4 py-3 text-gray-900">{{ boleta.periodo }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ boleta.tipo }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ boleta.sociedad_desc }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ boleta.dependencia }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ boleta.nivel }}</td>
+              <td class="px-4 py-3 text-gray-600">{{ boleta.cargo }}</td>
+              <td class="px-4 py-3 text-right font-bold text-gray-900">
+                <span>{{ formatMoney(boleta.ingresos) }}</span>
+              </td>
+              <td class="px-4 py-3 text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button (click)="verDetalle(selectedPersona, boleta.periodo, boleta.tipo)" class="bg-blue-50 hover:bg-blue-100 text-blue-600 p-1.5 rounded shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 inline-flex items-center justify-center" title="Detalle Planilla">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                  </button>
+                  <button (click)="verJudiciales(boleta)" class="bg-purple-50 hover:bg-purple-100 text-purple-600 p-1.5 rounded shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 inline-flex items-center justify-center" title="Judiciales">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" /></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <tr *ngIf="!cargandoHistorial && selectedPersona && historialBoletas.length === 0">
+            <td colspan="8" class="px-4 py-10 text-center text-gray-500">No se encontraron boletas para este trabajador.</td>
+          </tr>
+          
+          <tr *ngIf="!cargandoHistorial && !selectedPersona">
+            <td colspan="8" class="px-4 py-10 text-center text-gray-500">Seleccione un trabajador en la tabla superior para ver sus detalles de pago.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </div>
 
-<!-- Modal de Detalle de Emolumentos -->
-<div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" (click)="cerrarModal()">
-  <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
-    <!-- Header del Modal -->
-    <div class="p-6 border-b bg-gray-50" style="
-    padding-bottom: 4px;
-    ">
-      <div class="flex justify-between items-center">
-        <div>
-          <h2 class="text-xl font-bold text-gray-900">Detalles</h2>
-          <p class="text-sm text-gray-600 mt-1" *ngIf="selectedPersona">
-            {{ selectedPersona.nombre_completo }} - {{ selectedPersona.codigo }}
-          </p>
-          <p class="text-xs text-gray-500 mt-1" *ngIf="periodo">
-            Periodo: {{ periodo }}
-          </p>
+<!-- Modal Detalle (Pestañas Estilo SAP) -->
+<div *ngIf="showModal" class="fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-sm p-4" (click)="cerrarModal()">
+  <div class="bg-white rounded-lg shadow-2xl w-full max-w-5xl h-[95vh] md:h-[95vh] overflow-hidden flex flex-col" (click)="$event.stopPropagation()">
+    
+    <!-- Header Modal -->
+    <div class="p-4 border-b flex justify-between items-center bg-gray-50">
+      <h4 class="text-lg font-bold text-gray-800">Detalle de {{ boletaTipoActual || 'HABERES' }} Periodo {{ periodo }}</h4>
+      <button (click)="cerrarModal()" class="text-gray-400 hover:text-red-500 transition-colors focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+
+    <!-- Tabs Modal -->
+    <div class="flex border-b px-6 bg-gray-50 pt-3 gap-2">
+      <button (click)="tabActivo = 'datos'" [class.border-blue-600]="tabActivo === 'datos'" [class.text-blue-700]="tabActivo === 'datos'" [class.bg-white]="tabActivo === 'datos'" [class.border-transparent]="tabActivo !== 'datos'" [class.text-gray-500]="tabActivo !== 'datos'" class="px-5 py-2.5 text-sm font-medium border-b-2 hover:text-gray-700 transition-colors rounded-t-md relative top-[1px] focus:outline-none">
+        Datos del Empleado
+      </button>
+      <button (click)="tabActivo = 'remuneracion'" [class.border-blue-600]="tabActivo === 'remuneracion'" [class.text-blue-700]="tabActivo === 'remuneracion'" [class.bg-white]="tabActivo === 'remuneracion'" [class.border-transparent]="tabActivo !== 'remuneracion'" [class.text-gray-500]="tabActivo !== 'remuneracion'" class="px-5 py-2.5 text-sm font-medium border-b-2 hover:text-gray-700 transition-colors rounded-t-md relative top-[1px] focus:outline-none">
+        Remuneración del Empleado
+      </button>
+    </div>
+
+    <!-- Body Modal -->
+    <div class="flex-1 overflow-y-auto bg-white p-4 relative">
+      
+      <!-- Loading state inside Modal -->
+      <div *ngIf="loadingModal" class="py-12 text-center text-gray-500 flex flex-col items-center">
+         <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mb-2"></div>
+         Cargando datos...
+      </div>
+
+      <!-- Tab: Datos del Empleado -->
+      <div *ngIf="!loadingModal && tabActivo === 'datos'" class="pt-2 flex flex-col md:flex-row gap-6">
+        <!-- Sistema de Tarjetas (Cards) para organizar la información -->
+        <div class="flex-1 flex flex-col gap-5 overflow-y-auto pr-2 pb-4 custom-scrollbar">
+          
+          <!-- Tarjeta 1: Datos Personales -->
+          <div class="border border-gray-200 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 rounded-t-lg">
+              <h6 class="font-bold text-gray-700 text-xs uppercase tracking-wider">Datos Personales</h6>
+            </div>
+            <div class="p-4 bg-white rounded-b-lg grid grid-cols-1 md:grid-cols-6 gap-y-3 gap-x-4 text-sm items-center">
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">DNI</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersona?.documento || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Fecha Nac.</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ formatDate(selectedPersonaDetalle?.fch_nac) || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Nombres</div>
+              <div class="md:col-span-5 font-medium text-gray-900">{{ selectedPersona?.nombre_completo || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Dirección</div>
+              <div class="md:col-span-5 font-medium text-gray-900">{{ selectedPersonaDetalle?.direccion || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Esta. Civil</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersonaDetalle?.est_civ === '0' || selectedPersonaDetalle?.est_civ === 0 ? 'SOLTE.' : (selectedPersonaDetalle?.est_civ === '1' || selectedPersonaDetalle?.est_civ === 1 ? 'CASADO' : selectedPersonaDetalle?.est_civ || '') }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Sexo</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersonaDetalle?.sexo === '1' || selectedPersonaDetalle?.sexo === 1 ? 'MASC.' : (selectedPersonaDetalle?.sexo === '2' || selectedPersonaDetalle?.sexo === 2 ? 'FEM.' : selectedPersonaDetalle?.sexo || '') }}</div>
+              
+            </div>
+          </div>
+
+          <!-- Tarjeta 2: Datos Laborales -->
+          <div class="border border-gray-200 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 rounded-t-lg">
+              <h6 class="font-bold text-gray-700 text-xs uppercase tracking-wider">Datos Laborales</h6>
+            </div>
+            <div class="p-4 bg-white rounded-b-lg grid grid-cols-1 md:grid-cols-6 gap-y-3 gap-x-4 text-sm items-center">
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Codigo SAP</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersona?.codigo || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Condi. Ing.</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ tiposContrato[selectedPersona?.grup_per] || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Cargo</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersonaDetalle?.cargo || '' }} {{ selectedPersonaDetalle?.subg_prof !== null && selectedPersonaDetalle?.subg_prof !== undefined ? selectedPersonaDetalle?.subg_prof : '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Nivel</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersonaDetalle?.grup_prof || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Tiempo Serv.</div>
+              <div class="md:col-span-5 font-medium text-gray-900">0 años 0 meses 0 días</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Fecha Ing.</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ formatDate(selectedPersona?.fch_ing) || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Area Hos.</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ selectedPersonaDetalle?.are_nom || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Centro Costo</div>
+              <div class="md:col-span-5 font-medium text-gray-900">{{ selectedPersonaDetalle?.ccosto || '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">Dependencia</div>
+              <div class="md:col-span-5 font-medium text-gray-900">{{ selectedPersonaDetalle?.dep_codigo || '' }} - {{ selectedPersonaDetalle?.area || '' }}</div>
+              
+            </div>
+          </div>
+
+          <!-- Tarjeta 3: Datos de Pago -->
+          <div class="border border-gray-200 rounded-lg shadow-sm">
+            <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 rounded-t-lg">
+              <h6 class="font-bold text-gray-700 text-xs uppercase tracking-wider">Cuentas y Pensiones</h6>
+            </div>
+            <div class="p-4 bg-white rounded-b-lg grid grid-cols-1 md:grid-cols-6 gap-y-3 gap-x-4 text-sm items-center">
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Reg. Pensiones</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ getRegimenPensiones(selectedPersonaDetalle?.afp) }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">AFP / CUSPP</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ getAfpName(selectedPersonaDetalle?.afp) }} {{ selectedPersonaDetalle?.cuspp ? ' / ' + selectedPersonaDetalle?.cuspp : '' }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">C. Haberes</div>
+              <div class="md:col-span-2 font-medium text-gray-900">{{ (cuentaHaberes?.banco === '' || !cuentaHaberes?.banco) ? 'CHEQUE' : cuentaHaberes?.banco }} - {{ (cuentaHaberes?.cuenta === '' || !cuentaHaberes?.cuenta) ? 'CHEQUE' : cuentaHaberes?.cuenta }}</div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs">C. CTS</div>
+              <div class="md:col-span-2 font-medium text-gray-900">
+                 <ng-container *ngIf="cuentaCts">{{ cuentaCts?.banco || '' }} - {{ cuentaCts?.cuenta || '' }}</ng-container>
+              </div>
+              
+              <div class="md:col-span-1 text-gray-500 text-xs whitespace-nowrap">Mes Pago Vac.</div>
+              <div class="md:col-span-5 font-medium text-gray-900">{{ formatDate(selectedPersonaDetalle?.vacaciones) || '' }}</div>
+              
+            </div>
+          </div>
+          
         </div>
-        <button (click)="cerrarModal()" class="text-gray-400 hover:text-gray-600">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
+
+        <!-- Foto -->
+        <div class="w-32 md:w-36 flex-shrink-0 mx-auto md:mx-0">
+          <div class="bg-gray-50 border border-gray-200 p-1 rounded-md shadow-sm h-40 md:h-44 flex items-center justify-center overflow-hidden">
+            <ng-container *ngIf="!fotoFallida; else noPhotoModal">
+              <img [src]="getFotoUrl(selectedPersona?.codigo)" 
+                   (error)="onFotoError($event)"
+                   class="w-full h-full object-cover rounded" 
+                   alt="Foto del empleado" />
+            </ng-container>
+            <ng-template #noPhotoModal>
+              <svg class="w-16 h-16 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+              </svg>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Remuneracion -->
+      <div *ngIf="!loadingModal && tabActivo === 'remuneracion'">
+        <h5 class="font-bold text-gray-800 text-sm mb-4">{{ selectedPersona?.nombre_completo }}</h5>
+        
+        <div class="flex flex-col">
+          <!-- Sección de Tablas -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-2">
+            
+            <!-- Columna 1: Ingresos -->
+            <div>
+              <h6 class="text-blue-800 font-bold text-xs uppercase border-b border-gray-300 pb-1 mb-2">Ingresos</h6>
+              <div class="pr-2">
+                <table class="w-full text-xs">
+                  <thead class="text-gray-500 text-left border-b border-gray-200">
+                    <tr>
+                      <th class="py-1 w-10">Cod.</th>
+                      <th class="py-1">Descripción</th>
+                      <th class="py-1 w-10 text-center">Cant.</th>
+                      <th class="py-1 w-20 text-right">Importe</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let ingreso of emolumentos.ingresos" class="border-b border-gray-100 hover:bg-gray-50">
+                      <td class="py-1.5">{{ ingreso.concepto }}</td>
+                      <td class="py-1.5 truncate">{{ ingreso.descripcion }}</td>
+                      <td class="py-1.5 text-center text-gray-400"></td>
+                      <td class="py-1.5 text-right">{{ formatMoney(ingreso.importe) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Columna 2: Descuentos -->
+            <div>
+              <h6 class="text-blue-800 font-bold text-xs uppercase border-b border-gray-300 pb-1 mb-2">Descuentos</h6>
+              <div class="pr-2">
+                <table class="w-full text-xs">
+                  <thead class="text-gray-500 text-left border-b border-gray-200">
+                    <tr>
+                      <th class="py-1 w-10">Cod.</th>
+                      <th class="py-1">Descripción</th>
+                      <th class="py-1 w-10 text-center">Cant.</th>
+                      <th class="py-1 w-20 text-right">Importe</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let descuento of emolumentos.descuentos" class="border-b border-gray-100 hover:bg-gray-50">
+                      <td class="py-1.5">{{ descuento.concepto }}</td>
+                      <td class="py-1.5 truncate">{{ descuento.descripcion }}</td>
+                      <td class="py-1.5 text-center text-gray-400"></td>
+                      <td class="py-1.5 text-right">{{ formatMoney(descuento.importe) }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Columna 3: Aportes Patronales y Nominales -->
+            <div class="flex flex-col gap-6">
+              <!-- Aportes Patronales -->
+              <div>
+                <h6 class="text-blue-800 font-bold text-xs uppercase border-b border-gray-300 pb-1 mb-2">Aportes Patronales</h6>
+                <div class="pr-2">
+                  <table class="w-full text-xs">
+                    <thead class="text-gray-500 text-left border-b border-gray-200">
+                      <tr>
+                        <th class="py-1 w-10">Cod.</th>
+                        <th class="py-1">Descripción</th>
+                        <th class="py-1 w-10 text-center">Cant.</th>
+                        <th class="py-1 w-20 text-right">Importe</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngIf="emolumentos.aportesPatronales && emolumentos.aportesPatronales.length > 0; else noAportes">
+                        <tr *ngFor="let aporte of emolumentos.aportesPatronales" class="border-b border-gray-100 hover:bg-gray-50">
+                          <td class="py-1.5">{{ aporte.concepto }}</td>
+                          <td class="py-1.5 truncate">{{ aporte.descripcion }}</td>
+                          <td class="py-1.5 text-center text-gray-400"></td>
+                          <td class="py-1.5 text-right">{{ formatMoney(aporte.importe) }}</td>
+                        </tr>
+                      </ng-container>
+                      <ng-template #noAportes>
+                        <tr><td colspan="4" class="py-2 text-center text-gray-400 italic">Sin registros</td></tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- R Y B Nominales -->
+              <div>
+                <h6 class="text-blue-800 font-bold text-xs uppercase border-b border-gray-300 pb-1 mb-2">R Y B Nominales</h6>
+                <div class="grid grid-cols-1 gap-y-1 text-xs mt-2">
+                  <div class="flex justify-between border-b border-gray-100 py-1">
+                    <span class="text-gray-600">Boni. Nominal</span>
+                    <span class="font-medium text-gray-900">0.00</span>
+                  </div>
+                  <div class="flex justify-between border-b border-gray-100 py-1 mb-4">
+                    <span class="text-gray-600">Remu. Nominal</span>
+                    <span class="font-medium text-gray-900">{{ formatMoney(emolumentos.remuNominal) }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+          </div> <!-- Fin grid -->
+
+          <!-- Barra Inferior de Totales (Simple y Alineada) -->
+          <div class="mt-2 pt-2 border-t border-gray-300">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+              
+              <!-- Columna 1: Total Ingresos -->
+              <div>
+                <div class="flex justify-between items-center font-bold">
+                  <span class="text-gray-700">Total Ingresos</span>
+                  <span class="text-gray-900">{{ formatMoney(emolumentos.totalIngresos) }}</span>
+                </div>
+              </div>
+              
+              <!-- Columna 2: Descuentos y Neto -->
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center font-bold">
+                  <span class="text-gray-700">Total Descuen.</span>
+                  <span class="text-gray-900">{{ formatMoney(emolumentos.totalDescuentos) }}</span>
+                </div>
+                <div class="flex justify-between items-center font-bold text-base mt-1">
+                  <span class="text-gray-900">Total Neto</span>
+                  <span class="text-gray-900">{{ formatMoney(emolumentos.totalNeto) }}</span>
+                </div>
+              </div>
+              
+              <!-- Columna 3: Nominales -->
+              <div class="flex flex-col gap-1">
+                <div class="flex justify-between items-center font-bold">
+                  <span class="text-gray-700">Total Boni.</span>
+                  <span class="text-gray-900">{{ formatMoney(emolumentos.boniNominal) }}</span>
+                </div>
+                <div class="flex justify-between items-center font-bold">
+                  <span class="text-gray-700">Total Remu.</span>
+                  <span class="text-gray-900">{{ formatMoney(emolumentos.remuNominal) }}</span>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Contenido del Modal -->
-    <div class="p-6 h-[600px] overflow-y-auto" style="
-    padding-top: 0px;
-    ">
-      <!-- Tabs -->
-      <div class="border-b border-gray-200 mb-6" style="
-      margin-bottom: 16px;
-      ">
-        <nav class="-mb-px flex space-x-8">
-          <button
-            (click)="tabActivo = 'emolumentos'"
-            [class.border-blue-500]="tabActivo === 'emolumentos'"
-            [class.text-blue-600]="tabActivo === 'emolumentos'"
-            [class.border-transparent]="tabActivo !== 'emolumentos'"
-            [class.text-gray-500]="tabActivo !== 'emolumentos'"
-            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300"
-          >
-            Ingresos y Descuentos
-          </button>
-          <button
-            (click)="tabActivo = 'capacidad'"
-            [class.border-blue-500]="tabActivo === 'capacidad'"
-            [class.text-blue-600]="tabActivo === 'capacidad'"
-            [class.border-transparent]="tabActivo !== 'capacidad'"
-            [class.text-gray-500]="tabActivo !== 'capacidad'"
-            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm hover:text-blue-600 hover:border-blue-300"
-          >
-            Capacidad de Endeudamiento
-          </button>
-        </nav>
-      </div>
-
-      <div *ngIf="loadingModal" class="text-center py-8">
-        <p class="text-gray-600">Cargando detalle...</p>
-      </div>
-
-      <!-- Tab: Ingresos y Descuentos -->
-      <div *ngIf="!loadingModal && tabActivo === 'emolumentos'">
-        <!-- Tablas lado a lado -->
-        <div class="grid grid-cols-2 gap-6 mb-6">
-          <!-- Tabla de Ingresos (Izquierda) -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Ingresos</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full border">
-                <thead class="bg-green-50">
-                  <tr>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
-                    <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let ingreso of emolumentos.ingresos" class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2 text-sm text-gray-900">{{ ingreso.concepto }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">{{ ingreso.descripcion }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(ingreso.importe) }}</td>
-                  </tr>
-                  <tr class="bg-green-100 font-bold">
-                    <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Ingresos:</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(emolumentos.totalIngresos) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- Tabla de Descuentos (Derecha) -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-900 mb-3">Descuentos</h3>
-            <div class="overflow-x-auto">
-              <table class="w-full border">
-                <thead class="bg-red-50">
-                  <tr>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Concepto</th>
-                    <th class="px-4 py-2 text-left text-xs font-semibold text-gray-700 border-b">Descripción</th>
-                    <th class="px-4 py-2 text-right text-xs font-semibold text-gray-700 border-b">Importe</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let descuento of emolumentos.descuentos" class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2 text-sm text-gray-900">{{ descuento.concepto }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-700">{{ descuento.descripcion }}</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(descuento.importe) }}</td>
-                  </tr>
-                  <tr class="bg-red-100 font-bold">
-                    <td colspan="2" class="px-4 py-2 text-sm text-gray-900 text-right">Total Descuentos:</td>
-                    <td class="px-4 py-2 text-sm text-gray-900 text-right">{{ formatMoney(emolumentos.totalDescuentos) }}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Tab: Capacidad de Endeudamiento -->
-      <div *ngIf="!loadingModal && tabActivo === 'capacidad'">
-        <!-- Dos columnas -->
-        <div class="grid grid-cols-2 gap-6">
-          <!-- Columna Izquierda: Cálculo de Ingreso -->
-          <div class="border rounded p-4">
-            <div class="space-y-3">
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(+) Ingresos Permanentes</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.ingresosPermanentes) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Descuentos de Ley</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.descuentosLey) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Descuentos Judiciales</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.descuentosJudiciales) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Descuentos Institucionales</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.descuentosInstitucionales) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Descuentos Sindicales</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.descuentosSindicales) }}</span>
-              </div>
-              <div class="flex justify-between py-2 bg-blue-50 font-bold">
-                <span>Ingreso:</span>
-                <span>S/ {{ formatMoney(capacidad.ingreso) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Columna Derecha: Cálculo de Liquidez -->
-          <div class="border rounded p-4">
-            <div class="space-y-3">
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(*) Capacidad</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.capacidadEndeudamiento) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Descuentos de Terceros</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.descuentosTerceros) }}</span>
-              </div>
-              <div class="flex justify-between py-2 border-b">
-                <span class="text-gray-700">(-) Solicitud en Trámite</span>
-                <span class="font-semibold">S/ {{ formatMoney(capacidad.solicitudTramite) }}</span>
-              </div>
-              <div class="flex justify-between py-2 bg-green-50 font-bold text-lg">
-                <span>Liquidez:</span>
-                <span class="text-green-700">S/ {{ formatMoney(capacidad.liquidez) }}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+    <!-- Footer Modal -->
+    <div class="p-4 border-t bg-gray-50 flex justify-end gap-3 rounded-b-lg">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+        Imprimir
+      </button>
+      <button (click)="cerrarModal()" class="bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 px-5 py-2 rounded font-medium text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 shadow-sm">
+        Cerrar
+      </button>
     </div>
   </div>
 </div>

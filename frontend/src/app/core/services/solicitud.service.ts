@@ -14,7 +14,7 @@ export class SolicitudService {
   /**
    * Guarda múltiples solicitudes en la base de datos
    */
-  guardarSolicitudes(solicitudes: any[], codigoEntidad: string, fechaSolicitud: string): Observable<any> {
+  guardarSolicitudes(solicitudes: any[], codigoEntidad: string, nombreEntidad: string, fechaSolicitud: string): Observable<any> {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -23,6 +23,7 @@ export class SolicitudService {
     return this.http.post(this.apiUrl, {
       solicitudes,
       codigoEntidad,
+      nombreEntidad,
       fechaSolicitud
     }, { headers });
   }
